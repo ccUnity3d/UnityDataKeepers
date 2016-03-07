@@ -1,35 +1,32 @@
 ﻿using System.Data;
 using System.IO;
 using Mono.Data.Sqlite;
+using SQLite;
 
 // ReSharper disable once InconsistentNaming
 namespace DataKeepers
 {
     public class DataKeepersDB
     {
-        private string _constr = "";
-        private IDbConnection _dbc;
-        private IDbCommand _dbcm;
+        private SQLiteConnection _dbc;
 
         private static DataKeepersDB _instance;
         public static DataKeepersDB Instance { get { return _instance ?? (_instance = new DataKeepersDB()); } }
+        public bool Connected { get { return _dbc != null; }}
 
-        public IDbConnection Connect()
+        public SQLiteConnection Connect()
         {
             if (!DataKeepersPaths.Exists)
             {
                 CreateEmpty();
             }
-            _constr = string.Format("URI=file:{0}", DataKeepersPaths.DataBasePath);
-            _dbc = new SqliteConnection(_constr);
-            _dbc.Open();
-            _dbcm = _dbc.CreateCommand();
+            _dbc = new SQLiteConnection(DataKeepersPaths.DataBasePath);
             return _dbc;
         }
 
-        public IDbCommand GetCommand()
+        public SQLiteConnection GetConnection()
         {
-            return _dbcm;
+            return _dbc;
         }
 
         private void CreateEmpty()
