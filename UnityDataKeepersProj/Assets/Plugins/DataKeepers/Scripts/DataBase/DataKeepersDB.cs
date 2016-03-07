@@ -1,17 +1,15 @@
-﻿using System.Data;
-using System.IO;
+﻿using System.IO;
 using Mono.Data.Sqlite;
 using SQLite;
 
-// ReSharper disable once InconsistentNaming
-namespace DataKeepers
+namespace DataKeepers.DataBase
 {
-    public class DataKeepersDB
+    public class DataKeepersDb
     {
         private SQLiteConnection _dbc;
 
-        private static DataKeepersDB _instance;
-        public static DataKeepersDB Instance { get { return _instance ?? (_instance = new DataKeepersDB()); } }
+        private static DataKeepersDb _instance;
+        public static DataKeepersDb Instance { get { return _instance ?? (_instance = new DataKeepersDb()); } }
         public bool Connected { get { return _dbc != null; }}
 
         public SQLiteConnection Connect()

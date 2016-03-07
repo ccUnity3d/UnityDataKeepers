@@ -2,35 +2,39 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-public class CharpSingleton<T> where T : class
+namespace DataKeepers
 {
-    public static T _instance = null;
-
-    public static T Instance
+    public class CharpSingleton<T> where T : class
     {
-        get
+        private static T _instance;
+
+        public static T Instance
         {
-            if (_instance == null)
+            get
             {
-                _instance = (T) typeof(T).GetConstructor(
-                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-                    null,
-                    new Type[0],
-                    new ParameterModifier[0]).Invoke(null);
+                if (_instance == null)
+                {
+                    _instance = (T) typeof(T).GetConstructor(
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+                        null,
+                        new Type[0],
+                        new ParameterModifier[0]).Invoke(null);
 
-                try
-                {
-                    (_instance as CharpSingleton<T>).OnInit();
+                    try
+                    {
+                        var charpSingleton = _instance as CharpSingleton<T>;
+                        if (charpSingleton != null) charpSingleton.OnInit();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
                 }
-                catch (Exception e)
-                {
-                    Debug.LogError(e.Message);
-                }
+
+                return _instance;
             }
-
-            return _instance;
         }
-    }
 
-    protected virtual void OnInit() { }
+        protected virtual void OnInit() { }
+    }
 }

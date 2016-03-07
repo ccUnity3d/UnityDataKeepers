@@ -1,3 +1,6 @@
-﻿public class KeeperItem : SerializableObject
+﻿namespace DataKeepers
 {
+    public class KeeperItem : SerializableObject
+    {
+    }
 }

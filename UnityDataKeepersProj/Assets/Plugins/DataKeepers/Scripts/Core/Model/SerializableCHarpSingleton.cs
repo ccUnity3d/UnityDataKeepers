@@ -1,24 +1,44 @@
 using System;
+using System.Reflection;
 using JsonDotNet.Extras.CustomConverters;
 using Newtonsoft.Json;
 using UnityEngine;
 
-[Serializable]
-public class SerializableCharpSingleton<T> : CharpSingleton<T> where T : class
+namespace DataKeepers
 {
-    protected SerializableCharpSingleton():base() {}
-
-    private static readonly JsonConverter[] Converters = {
-        new Vector2Converter(),
-        new Vector3Converter(),
-        new Vector4Converter()
-    };
-
-    [SerializeField]
-    public string Id = "";
-
-    public string Justify()
+    [Serializable]
+    public class SerializableCharpSingleton<T> : SerializableObject where T : class
     {
-        return JsonConvert.SerializeObject(this, Converters);
+        private static T _instance;
+
+        public static T Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = (T)typeof(T).GetConstructor(
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+                        null,
+                        new Type[0],
+                        new ParameterModifier[0]).Invoke(null);
+
+                    try
+                    {
+                        var serializableCharpSingleton = _instance as SerializableCharpSingleton<T>;
+                        if (serializableCharpSingleton != null)
+                            serializableCharpSingleton.OnInit();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
+                }
+
+                return _instance;
+            }
+        }
+
+        protected virtual void OnInit() { }
     }
 }

@@ -1,4 +1,4 @@
-﻿using DataKeepers;
+﻿using DataKeepers.DataBase;
 using SQLite;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ public class InitTest : MonoBehaviour
         Debug.Log(string.Format("Is db exists? {0}", DataKeepersPaths.Exists));
 
         Debug.Log("Connection...");
-        var conn = DataKeepersDB.Instance.Connect();
+        var conn = DataKeepersDb.Instance.Connect();
         Debug.Log("Connected? "+(conn!=null));
     }
 
@@ -32,11 +32,11 @@ public class InitTest : MonoBehaviour
     [ContextMenu("Create table test")]
     public void CreateTableTest()
     {
-        if (!DataKeepersDB.Instance.Connected)
+        if (!DataKeepersDb.Instance.Connected)
         {
-            DataKeepersDB.Instance.Connect();
+            DataKeepersDb.Instance.Connect();
         }
-        DataKeepersDB.Instance.GetConnection().CreateTable<TestData>();
-        DataKeepersDB.Instance.GetConnection().Insert(new TestData());
+        DataKeepersDb.Instance.GetConnection().CreateTable<TestData>();
+        DataKeepersDb.Instance.GetConnection().Insert(new TestData());
     }
 }

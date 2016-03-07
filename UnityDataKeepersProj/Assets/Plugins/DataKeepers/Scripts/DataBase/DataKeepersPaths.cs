@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace DataKeepers
+namespace DataKeepers.DataBase
 {
     public static class DataKeepersPaths
     {
