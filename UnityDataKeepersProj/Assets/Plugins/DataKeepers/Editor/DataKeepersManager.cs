@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using DataKeepers.DataBase;
 using SQLite;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace DataKeepers.Manager
 
         private string _backendScriptId;
         private string _backendMainKeeperId;
+        private Vector2 _versionsPos;
 
         void OnGUI()
         {
@@ -33,7 +35,36 @@ namespace DataKeepers.Manager
 
         private void ShowVersions()
         {
-            var versions = _editorData.GetVersions();
+            try
+            {
+                _versionsPos = EditorGUILayout.BeginScrollView(_versionsPos);
+                var versions = _editorData.GetVersions();
+                foreach (var version in versions)
+                {
+                    ShowVersion(version);
+                }
+                EditorGUILayout.EndScrollView();
+            }
+            catch
+            {
+                EditorGUILayout.EndScrollView();
+                _editorData.Load();
+            }
+        }
+
+        private void ShowVersion(KeeperVersion version)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField(string.Format("Id: {0}", version.Id));
+            EditorGUILayout.LabelField(string.Format("LoadingDateTime: {0}", version.LoadingDateTime.ToString(CultureInfo.InvariantCulture)));
+            EditorGUILayout.LabelField(string.Format("Text length: {0}", version.KeeperJson.Length));
+            EditorGUILayout.EndVertical();
+            GUILayout.Button("Generate sources", GUILayout.Height(60));
+            GUILayout.Button("Copy as actual", GUILayout.Height(60));
+            GUILayout.Button("Remove", GUILayout.Height(60));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space();
         }
 
         private void ShowBackendSettings()
@@ -64,14 +95,14 @@ namespace DataKeepers.Manager
 
         private void LoadKeepersAndSave()
         {
-            string GetKeeperUrl = string.Format(LoadUrlFormat, _backendScriptId, _backendMainKeeperId);
-            Debug.Log("Start loading keeper from " + GetKeeperUrl);
-            var www = new WWW(GetKeeperUrl);
+            var getKeeperUrl = string.Format(LoadUrlFormat, _backendScriptId, _backendMainKeeperId);
+            Debug.Log("Start loading keeper from " + getKeeperUrl);
+            var www = new WWW(getKeeperUrl);
             ContinuationManager.Add(() => www.isDone, () =>
             {
                 if (!string.IsNullOrEmpty(www.error))
                 {
-                    Debug.LogError(string.Format("Failed to load main keepers from URL [{0}].\nError: {1}", GetKeeperUrl, www.error));
+                    Debug.LogError(string.Format("Failed to load main keepers from URL [{0}].\nError: {1}", getKeeperUrl, www.error));
                 }
                 else
                 {
@@ -80,6 +111,7 @@ namespace DataKeepers.Manager
                         var version = new KeeperVersion(www.text);
                         _editorData.SaveKeeperVersion(version);
                         Debug.Log(string.Format("Keeper was loaded and saved!\nLoaded data:\n{0}",www.text));
+                        Repaint();
                     }
                     catch (Exception e)
                     {
