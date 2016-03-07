@@ -11,7 +11,8 @@ public class InitTest : MonoBehaviour
         Debug.Log(string.Format("Is db exists? {0}", DataKeepersPaths.Exists));
 
         Debug.Log("Connection...");
-        var conn = DataKeepersDb.Instance.Connect();
+        var conn = new DataKeepersDbConnector();
+        conn.ConnectToDefaultStorage();
         Debug.Log("Connected? "+(conn!=null));
     }
 
@@ -32,11 +33,9 @@ public class InitTest : MonoBehaviour
     [ContextMenu("Create table test")]
     public void CreateTableTest()
     {
-        if (!DataKeepersDb.Instance.Connected)
-        {
-            DataKeepersDb.Instance.Connect();
-        }
-        DataKeepersDb.Instance.GetConnection().CreateTable<TestData>();
-        DataKeepersDb.Instance.GetConnection().Insert(new TestData());
+        var conn = new DataKeepersDbConnector();
+        conn.ConnectToDefaultStorage();
+        conn.GetConnection().CreateTable<TestData>();
+        conn.GetConnection().Insert(new TestData());
     }
 }

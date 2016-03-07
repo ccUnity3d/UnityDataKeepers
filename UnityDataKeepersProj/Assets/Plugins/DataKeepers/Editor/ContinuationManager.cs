@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
-namespace DataKeepers.EditorWindow
+namespace DataKeepers.Manager
 {
     internal static class ContinuationManager
     {
