@@ -112,7 +112,13 @@ namespace DataKeepers.Manager
                 };
                 con.Insert(kSignature);
             }
+            foreach (var item in items)
+            {
+                con.CreateCommand("DROP TABLE " + item["Type"]).ExecuteNonQuery();
+                // TODO: create query to create item's table and enter items
 
+            }
+            con.Close();
         }
 
         private void GetItemsSignatures(JsonReader reader, out List<Dictionary<string, string>> keepersSignatures,
