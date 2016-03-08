@@ -60,11 +60,32 @@ namespace DataKeepers.Manager
             EditorGUILayout.LabelField(string.Format("LoadingDateTime: {0}", version.LoadingDateTime.ToString(CultureInfo.InvariantCulture)));
             EditorGUILayout.LabelField(string.Format("Text length: {0}", version.KeeperJson.Length));
             EditorGUILayout.EndVertical();
-            GUILayout.Button("Generate sources", GUILayout.Height(60));
-            GUILayout.Button("Copy as actual", GUILayout.Height(60));
-            GUILayout.Button("Remove", GUILayout.Height(60));
+            if (GUILayout.Button("Generate sources", GUILayout.Height(60))) GenerateSources(version);
+            if (GUILayout.Button("Set as actual", GUILayout.Height(60))) SetAsActual(version);
+            if (GUILayout.Button("Remove", GUILayout.Height(60))) RemoveVersion(version);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
+        }
+
+        private void SetAsActual(KeeperVersion version)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GenerateSources(KeeperVersion version)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RemoveVersion(KeeperVersion version)
+        {
+            if (EditorUtility.DisplayDialog("Attention",
+                string.Format("Are you sure than you want to remove version {0} created at {1} from base?", version.Id,
+                    version.LoadingDateTime), "Yes", "No"))
+            {
+                _editorData.Remove(version);
+                Repaint();
+            }
         }
 
         private void ShowBackendSettings()
@@ -174,6 +195,11 @@ namespace DataKeepers.Manager
         public List<KeeperVersion> GetVersions()
         {
             return _dbEditor.Query<KeeperVersion>("SELECT * FROM KeeperVersion");
+        }
+
+        public void Remove(KeeperVersion version)
+        {
+            _dbEditor.Table<KeeperVersion>().Delete(v => v.Id == version.Id);
         }
     }
 }
