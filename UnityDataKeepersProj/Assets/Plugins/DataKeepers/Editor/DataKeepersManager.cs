@@ -8,6 +8,7 @@ using SQLite;
 using UnityEngine;
 using UnityEditor;
 using UnityEngineInternal;
+using Assets.Plugins.DataKeepers.Editor;
 
 namespace DataKeepers.Manager
 {
@@ -80,9 +81,13 @@ namespace DataKeepers.Manager
         {
             var json = version.KeeperJson;
             JsonReader reader = new JsonTextReader(new StringReader(json));
-            var signatures = GetItemsSignatures(reader);
+            List<Dictionary<string, string>> keepers;
+            List<Dictionary<string, string>> items;
+            GetItemsSignatures(reader, out keepers, out items);
+            RewriteActualDataSignatures(keepers, items);
 
-            Debug.Log(JsonConvert.SerializeObject(signatures));
+            //Debug.Log("Keepers: "+JsonConvert.SerializeObject(keepers));
+            //Debug.Log("Items signatures: " + JsonConvert.SerializeObject(items));
 
             Debug.Log("All keepers sucessfully generated!");
         }
@@ -91,10 +96,31 @@ namespace DataKeepers.Manager
             throw new NotImplementedException();
         }
 
-        private List<Dictionary<string, string>> GetItemsSignatures(JsonReader reader)
+        private void RewriteActualDataSignatures(List<Dictionary<string, string>> keepers, List<Dictionary<string, string>> items)
         {
+            DataKeepersDbConnector current = new DataKeepersDbConnector();
+            var con = current.ConnectToDefaultStorage();
+            con.CreateTable<KeeperSignature>();
+            con.DeleteAll<KeeperSignature>();
+            // generate sql
+            foreach (var keeper in keepers)
+            {
+                var kSignature = new KeeperSignature
+                {
+                    KeeperName = keeper["Type"],
+                    ItemType = keeper["Items"]
+                };
+                con.Insert(kSignature);
+            }
+
+        }
+
+        private void GetItemsSignatures(JsonReader reader, out List<Dictionary<string, string>> keepersSignatures,
+            out List<Dictionary<string, string>> itemsSignatures)
+        {
+            keepersSignatures = new List<Dictionary<string, string>>();
+            itemsSignatures = new List<Dictionary<string, string>>();
             var objectLevel = 0;
-            var res = new List<Dictionary<string, string>>();
             var itemSignature = new Dictionary<string, string>();
             var keeperSignature = new Dictionary<string, string>();
             while (reader.Read())
@@ -109,9 +135,9 @@ namespace DataKeepers.Manager
                         objectLevel--;
                         if (objectLevel == 0)
                         {
-                            //CreateClasses(keeperSignature, itemSignature);
-                            res.Add(itemSignature);
-                            res.Add(keeperSignature);
+                            keeperSignature["Items"] = itemSignature["Type"];
+                            itemsSignatures.Add(itemSignature);
+                            keepersSignatures.Add(keeperSignature);
                             keeperSignature = new Dictionary<string, string>();
                             itemSignature = new Dictionary<string, string>();
                         }
@@ -125,9 +151,9 @@ namespace DataKeepers.Manager
                                 keeperSignature.Add("Items", "Array");
                                 break;
                             }
-                            string name = (string)reader.Value;
+                            string name = (string) reader.Value;
                             reader.Read();
-                            keeperSignature.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                            keeperSignature.Add(name, name == "Type" ? (string) reader.Value : reader.ValueType.FullName);
                         }
                         break;
 
@@ -137,7 +163,6 @@ namespace DataKeepers.Manager
                         break;
                 }
             }
-            return res;
         }
 
         private static Dictionary<string, string> ReadItemSignature(JsonReader reader)
