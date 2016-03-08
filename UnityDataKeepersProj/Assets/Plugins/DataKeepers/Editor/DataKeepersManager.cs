@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using DataKeepers.DataBase;
+using Newtonsoft.Json;
 using SQLite;
 using UnityEngine;
 using UnityEditor;
@@ -19,6 +21,7 @@ namespace DataKeepers.Manager
         private string _backendScriptId;
         private string _backendMainKeeperId;
         private Vector2 _versionsPos;
+        private int _connectionTry = 0;
 
         void OnGUI()
         {
@@ -44,11 +47,17 @@ namespace DataKeepers.Manager
                     ShowVersion(version);
                 }
                 EditorGUILayout.EndScrollView();
+                _connectionTry = 0;
             }
             catch
             {
                 EditorGUILayout.EndScrollView();
                 _editorData.Load();
+                if (_connectionTry < 3)
+                {
+                    Repaint();
+                    _connectionTry++;
+                }
             }
         }
 
@@ -60,7 +69,7 @@ namespace DataKeepers.Manager
             EditorGUILayout.LabelField(string.Format("LoadingDateTime: {0}", version.LoadingDateTime.ToString(CultureInfo.InvariantCulture)));
             EditorGUILayout.LabelField(string.Format("Text length: {0}", version.KeeperJson.Length));
             EditorGUILayout.EndVertical();
-            if (GUILayout.Button("Generate sources", GUILayout.Height(60))) GenerateSources(version);
+            if (GUILayout.Button("Generate sources\n(and set as actual)", GUILayout.Height(60))) GenerateSources(version);
             if (GUILayout.Button("Set as actual", GUILayout.Height(60))) SetAsActual(version);
             if (GUILayout.Button("Remove", GUILayout.Height(60))) RemoveVersion(version);
             EditorGUILayout.EndHorizontal();
@@ -69,12 +78,86 @@ namespace DataKeepers.Manager
 
         private void SetAsActual(KeeperVersion version)
         {
-            throw new NotImplementedException();
-        }
+            var json = version.KeeperJson;
+            JsonReader reader = new JsonTextReader(new StringReader(json));
+            var signatures = GetItemsSignatures(reader);
 
+            Debug.Log(JsonConvert.SerializeObject(signatures));
+
+            Debug.Log("All keepers sucessfully generated!");
+        }
         private void GenerateSources(KeeperVersion version)
         {
             throw new NotImplementedException();
+        }
+
+        private List<Dictionary<string, string>> GetItemsSignatures(JsonReader reader)
+        {
+            var objectLevel = 0;
+            var res = new List<Dictionary<string, string>>();
+            var itemSignature = new Dictionary<string, string>();
+            var keeperSignature = new Dictionary<string, string>();
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonToken.StartObject:
+                        objectLevel++;
+                        break;
+
+                    case JsonToken.EndObject:
+                        objectLevel--;
+                        if (objectLevel == 0)
+                        {
+                            //CreateClasses(keeperSignature, itemSignature);
+                            res.Add(itemSignature);
+                            res.Add(keeperSignature);
+                            keeperSignature = new Dictionary<string, string>();
+                            itemSignature = new Dictionary<string, string>();
+                        }
+                        break;
+
+                    case JsonToken.PropertyName:
+                        if (objectLevel == 1)
+                        {
+                            if ((string)reader.Value == "Items")
+                            {
+                                keeperSignature.Add("Items", "Array");
+                                break;
+                            }
+                            string name = (string)reader.Value;
+                            reader.Read();
+                            keeperSignature.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                        }
+                        break;
+
+                    case JsonToken.StartArray:
+                        if (objectLevel > 0)
+                            itemSignature = ReadItemSignature(reader);
+                        break;
+                }
+            }
+            return res;
+        }
+
+        private static Dictionary<string, string> ReadItemSignature(JsonReader reader)
+        {
+            var res = new Dictionary<string, string>();
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonToken.PropertyName:
+                        var name = reader.Value as string;
+                        reader.Read();
+                        res.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                        break;
+
+                    case JsonToken.EndObject:
+                        return res;
+                }
+            }
+            return res;
         }
 
         private void RemoveVersion(KeeperVersion version)
