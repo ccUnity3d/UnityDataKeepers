@@ -230,10 +230,10 @@ namespace DataKeepers.Manager
 
                 MemberInfo[] mi = baseType.GetMember(member.Key);
                 if (mi.Length > 0) continue;
-
                 CodeMemberField field = new CodeMemberField();
-                field.Attributes = MemberAttributes.Public;
+                field.Attributes = MemberAttributes.Public | MemberAttributes.Final;
                 field.Name = member.Key;
+                field.Name += " { get; set; }";
                 try
                 {
                     field.Type = new CodeTypeReference(Type.GetType(member.Value));
@@ -296,6 +296,7 @@ namespace DataKeepers.Manager
                 {
                     field.Type = new CodeTypeReference(member.Value);
                 }
+                field.Name += " { get; set; }";
                 targetClass.Members.Add(field);
             }
 
@@ -306,15 +307,30 @@ namespace DataKeepers.Manager
 
         public static void GenerateCSharpCode(CodeCompileUnit targetUnit, string fileName)
         {
+            string filename = GeneratedFilesDir + "/" + fileName;
             CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
             CodeGeneratorOptions options = new CodeGeneratorOptions();
             options.BracingStyle = "C";
             if (!Directory.Exists(GeneratedFilesDir))
                 Directory.CreateDirectory(GeneratedFilesDir);
-            using (StreamWriter sourceWriter = new StreamWriter(GeneratedFilesDir + "/" + fileName))
+
+            using (StreamWriter sourceWriter = new StreamWriter(filename))
             {
                 provider.GenerateCodeFromCompileUnit(
                     targetUnit, sourceWriter, options);
+            }
+
+            string contents;
+            using (StreamReader reader = new StreamReader(filename))
+            {
+                contents = reader.ReadToEnd();
+
+                contents = contents.Replace("};", "}");
+            }
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.Write(contents);
             }
         }
 
