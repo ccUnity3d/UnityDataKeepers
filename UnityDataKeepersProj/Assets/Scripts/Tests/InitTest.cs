@@ -35,7 +35,7 @@ public class InitTest : MonoBehaviour
     {
         var conn = new DataKeepersDbConnector();
         conn.ConnectToDefaultStorage();
-        conn.GetConnection().CreateTable<TestData>();
-        conn.GetConnection().Insert(new TestData());
+        conn.CreateTable<TestData>();
+        conn.Insert(new TestData());
     }
 }

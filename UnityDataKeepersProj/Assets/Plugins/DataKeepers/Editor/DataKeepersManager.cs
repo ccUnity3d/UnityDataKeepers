@@ -50,8 +50,9 @@ namespace DataKeepers.Manager
                 EditorGUILayout.EndScrollView();
                 _connectionTry = 0;
             }
-            catch
+            catch (SQLiteException e)
             {
+                Debug.LogError("SQL Error when drawing versions list: " + e.Message);
                 EditorGUILayout.EndScrollView();
                 _editorData.Load();
                 if (_connectionTry < 3)
@@ -59,6 +60,10 @@ namespace DataKeepers.Manager
                     Repaint();
                     _connectionTry++;
                 }
+            }
+            catch (Exception e)
+            {
+                // ignored
             }
         }
 
@@ -99,9 +104,9 @@ namespace DataKeepers.Manager
         private void RewriteActualDataSignatures(List<Dictionary<string, string>> keepers, List<Dictionary<string, string>> items)
         {
             DataKeepersDbConnector current = new DataKeepersDbConnector();
-            var con = current.ConnectToDefaultStorage();
-            con.CreateTable<KeeperSignature>();
-            con.DeleteAll<KeeperSignature>();
+            current.ConnectToDefaultStorage();
+            current.DropTableIfExists(typeof(KeeperSignature).Name);
+            current.CreateTable<KeeperSignature>();
             // generate sql
             foreach (var keeper in keepers)
             {
@@ -110,15 +115,38 @@ namespace DataKeepers.Manager
                     KeeperName = keeper["Type"],
                     ItemType = keeper["Items"]
                 };
-                con.Insert(kSignature);
+                current.Insert(kSignature);
             }
+
             foreach (var item in items)
             {
-                con.CreateCommand("DROP TABLE " + item["Type"]).ExecuteNonQuery();
-                // TODO: create query to create item's table and enter items
+                current.DropTableIfExists(item["Type"]);
+                var query = GenerateCreateTableQueryFromSignature(item);
+                if (!current.Query(query))
+                    Debug.Log("Error when executing creating of table "+item["Type"]);
 
             }
-            con.Close();
+            current.Close();
+        }
+
+        private string GenerateCreateTableQueryFromSignature(Dictionary<string, string> item)
+        {
+            var attrs = new string[item.Count-1];
+            var pos = 0;
+            foreach (var data in item)
+            {
+                if (data.Key == "Type") continue;
+                var type = data.Value;
+                if (type == typeof(bool).FullName) type = "BOOLEAN";
+                else if (type == typeof(string).FullName) type = "VARCHAR";
+                else if (type == typeof(int).FullName) type = "INT";
+                else if (type == typeof(long).FullName) type = "BIGINT";
+                else if (type == typeof(float).FullName) type = "FLOAT";
+                else type = "VARCHAR";
+                attrs[pos++] = string.Format("{0} {1}", data.Key, type);
+            }
+            var q = string.Format("CREATE TABLE {0} ({1});", item["Type"], string.Join(",", attrs));
+            return q;
         }
 
         private void GetItemsSignatures(JsonReader reader, out List<Dictionary<string, string>> keepersSignatures,
@@ -285,7 +313,7 @@ namespace DataKeepers.Manager
 
     internal class DataKeepersManagerEditorData
     {
-        private SQLiteConnection _dbEditor;
+        private DataKeepersDbConnector _dbEditor;
         public bool IsLoaded { get; private set; }
 
         public DataKeepersManagerEditorData()
@@ -295,8 +323,8 @@ namespace DataKeepers.Manager
 
         public void Load()
         {
-            var connector = new DataKeepersDbConnector();
-            _dbEditor = connector.ConnectTo(Application.dataPath + "/../Library/DataKeeper.db3");
+            _dbEditor = new DataKeepersDbConnector();
+            _dbEditor.ConnectTo(Application.dataPath + "/../Library/DataKeeper.db3");
             _dbEditor.CreateTable<KeeperVersion>();
             IsLoaded = true;
         }
