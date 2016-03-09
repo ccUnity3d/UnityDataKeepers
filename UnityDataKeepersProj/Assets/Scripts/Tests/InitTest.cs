@@ -40,13 +40,4 @@ public class InitTest : MonoBehaviour
         conn.CreateTable<TestData>();
         conn.Insert(new TestData());
     }
-
-    [ContextMenu("Get assembly name")]
-    
-    private void sdf()
-    {
-        Type t = typeof (Localization);
-        string s = t.Assembly.FullName.ToString();
-        Debug.Log(s);
-    }
 }

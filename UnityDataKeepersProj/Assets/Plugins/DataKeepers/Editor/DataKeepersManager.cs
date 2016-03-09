@@ -168,7 +168,8 @@ namespace DataKeepers.Manager
                             }
                             string name = (string)reader.Value;
                             reader.Read();
-                            keeperSignature.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                            var typeName = name == "Type" ? (string) reader.Value : reader.ValueType.FullName;
+                            keeperSignature.Add(name, typeName);
                         }
                         break;
 
@@ -493,7 +494,9 @@ namespace DataKeepers.Manager
                     case JsonToken.PropertyName:
                         var name = reader.Value as string;
                         reader.Read();
-                        res.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                        var typeName = name == "Type" ? (string)reader.Value : reader.ValueType.FullName;
+                        if (reader.ValueType == typeof (double)) typeName = typeof (float).FullName;
+                        res.Add(name, typeName);
                         break;
 
                     case JsonToken.EndObject:
