@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using SQLite;
 using UnityEngine;
 using UnityEditor;
-using UnityEngineInternal;
 using Assets.Plugins.DataKeepers.Editor;
 
 namespace DataKeepers.Manager
@@ -61,7 +60,7 @@ namespace DataKeepers.Manager
                     _connectionTry++;
                 }
             }
-            catch (Exception e)
+            catch
             {
                 // ignored
             }
@@ -85,48 +84,131 @@ namespace DataKeepers.Manager
         private void SetAsActual(KeeperVersion version)
         {
             var json = version.KeeperJson;
-            JsonReader reader = new JsonTextReader(new StringReader(json));
             List<Dictionary<string, string>> keepers;
             List<Dictionary<string, string>> items;
-            GetItemsSignatures(reader, out keepers, out items);
+            using (var reader = new JsonTextReader(new StringReader(json)))
+            {
+                GetItemsSignatures(reader, out keepers, out items);
+            }
             RewriteActualDataSignatures(keepers, items);
-
-            //Debug.Log("Keepers: "+JsonConvert.SerializeObject(keepers));
-            //Debug.Log("Items signatures: " + JsonConvert.SerializeObject(items));
-
-            Debug.Log("All keepers sucessfully generated!");
+            using (var reader = new JsonTextReader(new StringReader(json)))
+            {
+                PushActualData(reader);
+            }
         }
+
         private void GenerateSources(KeeperVersion version)
         {
             throw new NotImplementedException();
         }
 
+        private void PushActualData(JsonReader reader)
+        {
+            try
+            {
+                DataKeepersDbConnector current = new DataKeepersDbConnector();
+                current.ConnectToDefaultStorage();
+
+                var log = "Loading keepers...";
+                var loaded = 0;
+                var currentKeeperTypeName = "";
+                var objectLevel = 0;
+                var serializer = new JsonSerializer();
+                while (reader.Read())
+                {
+                    switch (reader.TokenType)
+                    {
+                        case JsonToken.StartObject:
+                            objectLevel++;
+                            if (objectLevel > 1)
+                            {
+                                var keeperType = Type.GetType(currentKeeperTypeName);
+                                if (keeperType == null)
+                                    throw new NotImplementedException("Keeper type " + currentKeeperTypeName +
+                                                                      " was not implemented, try generate sources at first.");
+                                var itemTypeName = keeperType.BaseType.GetGenericArguments()[1];
+                                var itemType = itemTypeName;
+                                if (itemType == null)
+                                    throw new NotImplementedException("Item type " + itemTypeName + " was not implemented, try generate sources at first.");
+                                var item = serializer.Deserialize(reader, itemType);
+                                current.Insert(item);
+//                            PushObjectToKeeper(keeperType, itemType, item);
+                                loaded++;
+                                objectLevel--;
+                            }
+                            break;
+
+                        case JsonToken.EndObject:
+                            objectLevel--;
+                            if (objectLevel == 0)
+                            {
+//                                var t = Type.GetType(currentKeeperTypeName);
+//                            var p = GetPropertyInBase(t, "Instance");
+//                                var m = t.GetMethod("Count");
+//                            var count = m.Invoke(p.GetValue(null, null), null);
+//                            log += string.Format("loaded objects: {0}, real {1} ", loaded, count);
+                                loaded = 0;
+                                // model finished!
+                            }
+                            break;
+
+                        case JsonToken.PropertyName:
+                            if (objectLevel == 1)
+                            {
+                                if ((string) reader.Value == "Type")
+                                {
+                                    reader.Read();
+                                    currentKeeperTypeName = (string) reader.Value;
+                                    log += string.Format("\r\nKeeper: [{0}] ", currentKeeperTypeName);
+                                }
+                            }
+                            break;
+                    }
+                }
+                Debug.Log(log);
+
+                current.Close();
+                Debug.Log("Current data pushed successfully!");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error when pushing data do db: " + e.Message);
+            }
+        }
+
         private void RewriteActualDataSignatures(List<Dictionary<string, string>> keepers, List<Dictionary<string, string>> items)
         {
-            DataKeepersDbConnector current = new DataKeepersDbConnector();
-            current.ConnectToDefaultStorage();
-            current.DropTableIfExists(typeof(KeeperSignature).Name);
-            current.CreateTable<KeeperSignature>();
-            // generate sql
-            foreach (var keeper in keepers)
+            try
             {
-                var kSignature = new KeeperSignature
+                DataKeepersDbConnector current = new DataKeepersDbConnector();
+                current.ConnectToDefaultStorage();
+                current.DropTableIfExists(typeof (KeeperSignature).Name);
+                current.CreateTable<KeeperSignature>();
+                // generate sql
+                foreach (var keeper in keepers)
                 {
-                    KeeperName = keeper["Type"],
-                    ItemType = keeper["Items"]
-                };
-                current.Insert(kSignature);
-            }
+                    var kSignature = new KeeperSignature
+                    {
+                        KeeperName = keeper["Type"],
+                        ItemType = keeper["Items"]
+                    };
+                    current.Insert(kSignature);
+                }
 
-            foreach (var item in items)
+                foreach (var item in items)
+                {
+                    current.DropTableIfExists(item["Type"]);
+                    var query = GenerateCreateTableQueryFromSignature(item);
+                    if (!current.Query(query))
+                        Debug.Log("Error when executing creating of table " + item["Type"]);
+                }
+                current.Close();
+                Debug.Log("Current signatures rewrited successfully!");
+            }
+            catch (Exception e)
             {
-                current.DropTableIfExists(item["Type"]);
-                var query = GenerateCreateTableQueryFromSignature(item);
-                if (!current.Query(query))
-                    Debug.Log("Error when executing creating of table "+item["Type"]);
-
+                Debug.LogError("Signature rewriting error: "+e.Message);
             }
-            current.Close();
         }
 
         private string GenerateCreateTableQueryFromSignature(Dictionary<string, string> item)
