@@ -1,7 +1,11 @@
 ﻿using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using DataKeepers.DataBase;
 using Newtonsoft.Json;
 using SQLite;
@@ -15,6 +19,11 @@ namespace DataKeepers.Manager
     {
         private const string LoadUrlFormat =
             "http://script.google.com/macros/s/{0}/exec?keeperId={1}";
+
+        private static string GeneratedFilesDir
+        {
+            get { return Application.streamingAssetsPath + "/../Scripts/Generated"; }
+        }
 
         private DataKeepersManagerEditorData _editorData = new DataKeepersManagerEditorData();
 
@@ -99,73 +108,255 @@ namespace DataKeepers.Manager
 
         private void GenerateSources(KeeperVersion version)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var json = version.KeeperJson;
+                List<Dictionary<string, string>> keepers;
+                List<Dictionary<string, string>> items;
+                using (var reader = new JsonTextReader(new StringReader(json)))
+                {
+                    GetItemsSignatures(reader, out keepers, out items);
+                }
+                RewriteActualDataSignatures(keepers, items);
+                using (var reader = new JsonTextReader(new StringReader(json)))
+                {
+                    ReadKeepersSignatureAndGenerate(reader);
+                }
+                using (var reader = new JsonTextReader(new StringReader(json)))
+                {
+                    PushActualData(reader);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error when creating sources: "+e.Message);
+            }
+        }
+
+        private static void ReadKeepersSignatureAndGenerate(JsonReader reader)
+        {
+            ClearGeneratedDirectory();
+
+            int objectLevel = 0;
+            Dictionary<string, string> itemSignature = new Dictionary<string, string>();
+            Dictionary<string, string> keeperSignature = new Dictionary<string, string>();
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonToken.StartObject:
+                        objectLevel++;
+                        break;
+
+                    case JsonToken.EndObject:
+                        objectLevel--;
+                        if (objectLevel == 0)
+                        {
+                            CreateClasses(keeperSignature, itemSignature);
+                            keeperSignature.Clear();
+                            itemSignature.Clear();
+                        }
+                        break;
+
+                    case JsonToken.PropertyName:
+                        if (objectLevel == 1)
+                        {
+                            if ((string)reader.Value == "Items")
+                            {
+                                keeperSignature.Add("Items", "Array");
+                                break;
+                            }
+                            string name = (string)reader.Value;
+                            reader.Read();
+                            keeperSignature.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                        }
+                        break;
+
+                    case JsonToken.StartArray:
+                        if (objectLevel > 0)
+                            itemSignature = ReadItemSignature(reader);
+                        break;
+                }
+            }
+        }
+
+        private static void ClearGeneratedDirectory()
+        {
+            foreach (var path in Directory.GetFiles(GeneratedFilesDir))
+            {
+                File.Delete(path);
+            }
+        }
+
+        private static void CreateClasses(Dictionary<string, string> keeperSignature, Dictionary<string, string> itemSignature)
+        {
+            CodeCompileUnit item = GenerateItem(itemSignature, typeof(KeeperItem));
+            GenerateCSharpCode(item, itemSignature["Type"] + ".cs");
+
+            //keeperSignature["Items"] = itemSignature["Type"] + "[]";
+            if (keeperSignature.ContainsKey("Items")) keeperSignature.Remove("Items");
+            CodeCompileUnit keeper = GenerateKeeper(keeperSignature,
+                "Keeper<" + keeperSignature["Type"] + "," + itemSignature["Type"] + ">");
+            if (keeper != null)
+                GenerateCSharpCode(keeper, keeperSignature["Type"] + ".cs");
+        }
+        private static CodeCompileUnit GenerateItem(Dictionary<string, string> keeperSignature, Type baseType)
+        {
+            CodeCompileUnit res = new CodeCompileUnit();
+            CodeTypeDeclaration targetClass;
+            CodeNamespace samples = new CodeNamespace();
+
+            // header
+            samples.Imports.Add(new CodeNamespaceImport("UnityEngine"));
+            samples.Imports.Add(new CodeNamespaceImport("System"));
+
+            // class
+            targetClass = new CodeTypeDeclaration(keeperSignature["Type"]);
+            targetClass.IsClass = true;
+            targetClass.IsPartial = true;
+            targetClass.TypeAttributes =
+                TypeAttributes.Public | TypeAttributes.Sealed;
+            var attr = new CodeAttributeDeclarationCollection();
+            attr.Add(new CodeAttributeDeclaration("Serializable"));
+            targetClass.CustomAttributes = attr;
+            targetClass.BaseTypes.Add(new CodeTypeReference(baseType));
+
+            // fields
+            foreach (var member in keeperSignature)
+            {
+                if (member.Key == "Type")
+                    continue;
+
+                MemberInfo[] mi = baseType.GetMember(member.Key);
+                if (mi.Length > 0) continue;
+
+                CodeMemberField field = new CodeMemberField();
+                field.Attributes = MemberAttributes.Public;
+                field.Name = member.Key;
+                try
+                {
+                    field.Type = new CodeTypeReference(Type.GetType(member.Value));
+                }
+                catch (Exception)
+                {
+                    field.Type = new CodeTypeReference(member.Value);
+                }
+                field.CustomAttributes.Add(new CodeAttributeDeclaration("SerializeField"));
+                targetClass.Members.Add(field);
+            }
+
+            samples.Types.Add(targetClass);
+            res.Namespaces.Add(samples);
+            return res;
+        }
+
+        private static CodeCompileUnit GenerateKeeper(Dictionary<string, string> keeperSignature, string baseType)
+        {
+            CodeCompileUnit res = new CodeCompileUnit();
+            CodeTypeDeclaration targetClass;
+            CodeNamespace samples = new CodeNamespace();
+
+            // header
+            samples.Imports.Add(new CodeNamespaceImport("UnityEngine"));
+            samples.Imports.Add(new CodeNamespaceImport("System"));
+            samples.Imports.Add(new CodeNamespaceImport("DataKeepers"));
+
+            // class
+            targetClass = new CodeTypeDeclaration(keeperSignature["Type"])
+            {
+                IsClass = true,
+                IsPartial = true,
+                TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed
+            };
+            var attr = new CodeAttributeDeclarationCollection();
+            targetClass.CustomAttributes = attr;
+            targetClass.BaseTypes.Add(new CodeTypeReference(baseType));
+
+            // fields
+            foreach (var member in keeperSignature)
+            {
+                if (member.Key == "Type"
+#if RELEASE
+                || member.Key == "DebugDescription"
+#endif
+)
+                    continue;
+
+                CodeMemberField field = new CodeMemberField
+                {
+                    Attributes = MemberAttributes.Public,
+                    Name = member.Key
+                };
+                try
+                {
+                    field.Type = new CodeTypeReference(Type.GetType(member.Value));
+                }
+                catch (Exception)
+                {
+                    field.Type = new CodeTypeReference(member.Value);
+                }
+                targetClass.Members.Add(field);
+            }
+
+            samples.Types.Add(targetClass);
+            res.Namespaces.Add(samples);
+            return res;
+        }
+
+        public static void GenerateCSharpCode(CodeCompileUnit targetUnit, string fileName)
+        {
+            CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp");
+            CodeGeneratorOptions options = new CodeGeneratorOptions();
+            options.BracingStyle = "C";
+            if (!Directory.Exists(GeneratedFilesDir))
+                Directory.CreateDirectory(GeneratedFilesDir);
+            using (StreamWriter sourceWriter = new StreamWriter(GeneratedFilesDir + "/" + fileName))
+            {
+                provider.GenerateCodeFromCompileUnit(
+                    targetUnit, sourceWriter, options);
+            }
         }
 
         private void PushActualData(JsonReader reader)
         {
             try
             {
-                DataKeepersDbConnector current = new DataKeepersDbConnector();
+                var current = new DataKeepersDbConnector();
                 current.ConnectToDefaultStorage();
 
-                var log = "Loading keepers...";
-                var loaded = 0;
-                var currentKeeperTypeName = "";
+                var reading = false;
                 var objectLevel = 0;
-                var serializer = new JsonSerializer();
+
                 while (reader.Read())
                 {
                     switch (reader.TokenType)
                     {
                         case JsonToken.StartObject:
                             objectLevel++;
-                            if (objectLevel > 1)
+                            if (reading && objectLevel > 1)
                             {
-                                var keeperType = Type.GetType(currentKeeperTypeName);
-                                if (keeperType == null)
-                                    throw new NotImplementedException("Keeper type " + currentKeeperTypeName +
-                                                                      " was not implemented, try generate sources at first.");
-                                var itemTypeName = keeperType.BaseType.GetGenericArguments()[1];
-                                var itemType = itemTypeName;
-                                if (itemType == null)
-                                    throw new NotImplementedException("Item type " + itemTypeName + " was not implemented, try generate sources at first.");
-                                var item = serializer.Deserialize(reader, itemType);
-                                current.Insert(item);
-//                            PushObjectToKeeper(keeperType, itemType, item);
-                                loaded++;
                                 objectLevel--;
+                                var itemSignature = ReadItemValues(reader);
+                                var query = CreateIntestItemQuery(itemSignature);
+                                current.Query(query);
                             }
                             break;
 
                         case JsonToken.EndObject:
                             objectLevel--;
-                            if (objectLevel == 0)
-                            {
-//                                var t = Type.GetType(currentKeeperTypeName);
-//                            var p = GetPropertyInBase(t, "Instance");
-//                                var m = t.GetMethod("Count");
-//                            var count = m.Invoke(p.GetValue(null, null), null);
-//                            log += string.Format("loaded objects: {0}, real {1} ", loaded, count);
-                                loaded = 0;
-                                // model finished!
-                            }
                             break;
 
-                        case JsonToken.PropertyName:
+                        case JsonToken.StartArray:
+                            if (objectLevel > 0)
+                                reading = true;
+                            break;
+
+                        case JsonToken.EndArray:
                             if (objectLevel == 1)
-                            {
-                                if ((string) reader.Value == "Type")
-                                {
-                                    reader.Read();
-                                    currentKeeperTypeName = (string) reader.Value;
-                                    log += string.Format("\r\nKeeper: [{0}] ", currentKeeperTypeName);
-                                }
-                            }
+                                reading = false;
                             break;
                     }
                 }
-                Debug.Log(log);
 
                 current.Close();
                 Debug.Log("Current data pushed successfully!");
@@ -174,6 +365,17 @@ namespace DataKeepers.Manager
             {
                 Debug.LogError("Error when pushing data do db: " + e.Message);
             }
+        }
+
+        private string CreateIntestItemQuery(Dictionary<string, object> item)
+        {
+            var names = item.Where(pair => pair.Key != "Type").Select(pair => pair.Key).ToArray();
+            var values =
+                item.Where(pair => pair.Key != "Type")
+                    .Select(pair => string.Format("'{0}'", pair.Value))
+                    .ToArray();
+            return string.Format("INSERT INTO {0} ({1}) VALUES ({2})", item["Type"], string.Join(",", names),
+                string.Join(",", values));
         }
 
         private void RewriteActualDataSignatures(List<Dictionary<string, string>> keepers, List<Dictionary<string, string>> items)
@@ -267,7 +469,7 @@ namespace DataKeepers.Manager
                                 keeperSignature.Add("Items", "Array");
                                 break;
                             }
-                            string name = (string) reader.Value;
+                            var name = (string) reader.Value;
                             reader.Read();
                             keeperSignature.Add(name, name == "Type" ? (string) reader.Value : reader.ValueType.FullName);
                         }
@@ -292,6 +494,26 @@ namespace DataKeepers.Manager
                         var name = reader.Value as string;
                         reader.Read();
                         res.Add(name, name == "Type" ? (string)reader.Value : reader.ValueType.FullName);
+                        break;
+
+                    case JsonToken.EndObject:
+                        return res;
+                }
+            }
+            return res;
+        }
+
+        private static Dictionary<string, object> ReadItemValues(JsonReader reader)
+        {
+            var res = new Dictionary<string, object>();
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonToken.PropertyName:
+                        var name = reader.Value as string;
+                        reader.Read();
+                        res.Add(name, reader.Value);
                         break;
 
                     case JsonToken.EndObject:

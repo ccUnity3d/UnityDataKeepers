@@ -1,6 +1,8 @@
-﻿using DataKeepers.DataBase;
+﻿using System;
+using DataKeepers.DataBase;
 using SQLite;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class InitTest : MonoBehaviour
 {
@@ -37,5 +39,14 @@ public class InitTest : MonoBehaviour
         conn.ConnectToDefaultStorage();
         conn.CreateTable<TestData>();
         conn.Insert(new TestData());
+    }
+
+    [ContextMenu("Get assembly name")]
+    
+    private void sdf()
+    {
+        Type t = typeof (Localization);
+        string s = t.Assembly.FullName.ToString();
+        Debug.Log(s);
     }
 }
