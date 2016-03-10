@@ -1,43 +1,13 @@
-﻿using System;
-using DataKeepers.DataBase;
-using SQLite;
-using UnityEngine;
-using Random = UnityEngine.Random;
+﻿using UnityEngine;
 
 public class InitTest : MonoBehaviour
 {
-    [ContextMenu("Connection test")]
-    public void Test()
+    void Awake()
     {
-        Debug.Log(string.Format("Path of db: {0}",DataKeepersPaths.DataBasePath));
-        Debug.Log(string.Format("Is db exists? {0}", DataKeepersPaths.Exists));
-
-        Debug.Log("Connection...");
-        var conn = new DataKeepersDbConnector();
-        conn.ConnectToDefaultStorage();
-        Debug.Log("Connected? "+(conn!=null));
-    }
-
-    public class TestData
-    {
-        public TestData()
-        {
-            Id = "Id" + Random.value;
-            NumData = (int) (Random.value*100);
-            FloatData = Random.value;
-        }
-
-        [PrimaryKey] public string Id { get; set; }
-        public int NumData { get; set; }
-        public float FloatData { get; set; }
-    }
-
-    [ContextMenu("Create table test")]
-    public void CreateTableTest()
-    {
-        var conn = new DataKeepersDbConnector();
-        conn.ConnectToDefaultStorage();
-        conn.CreateTable<TestData>();
-        conn.Insert(new TestData());
+        var id = "text1";
+        var loc = LocalizationKeeper.Instance.GetById(id);
+        Debug.LogFormat("localization for id {0}: {1}", id, loc == null ? "null" : loc.Justify());
+        Debug.LogFormat("resource for id {0}: {1}", "wood", ResourcesKeeper.Instance.GetById("wood"));
+        Debug.LogFormat("resource for id {0}: {1}", "wood2", ResourcesKeeper.Instance.GetById("wood2"));
     }
 }

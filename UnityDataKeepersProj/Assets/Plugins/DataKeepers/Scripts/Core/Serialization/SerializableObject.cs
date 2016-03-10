@@ -1,5 +1,6 @@
 ﻿using JsonDotNet.Extras.CustomConverters;
 using Newtonsoft.Json;
+using SQLite;
 using UnityEngine;
 
 public class SerializableObject
@@ -10,7 +11,7 @@ public class SerializableObject
         new Vector4Converter()
     };
 
-    [SerializeField] public string Id = "";
+    [PrimaryKey,SerializeField] public string Id { get; set; }
 
     public string Justify()
     {

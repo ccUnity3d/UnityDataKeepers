@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Mono.Data.Sqlite;
 using SQLite;
@@ -95,6 +96,47 @@ namespace DataKeepers.DataBase
         public TableQuery<T> Table<T>() where T : new()
         {
             return _dbc == null ? null : _dbc.Table<T>();
+        }
+
+        public List<T> GetQuery<T>(Predicate<T> selectIf) where T : new()
+        {
+            return GetQuery<T>().FindAll(selectIf);
+        }
+
+        public List<T> GetQuery<T>() where T : new()
+        {
+            return _dbc == null ? new List<T>() : Query<T>(string.Format("SELECT * FROM {0}", typeof(T).Name));
+        }
+
+        /// <summary>
+        /// Updates all of the columns of a table using the specified object
+        /// except for its primary key.
+        /// The object is required to have a primary key.
+        /// </summary>
+        /// <param name="obj">
+        /// The object to update. It must have a primary key designated using the PrimaryKeyAttribute.
+        /// </param>
+        /// <returns>
+        /// The number of rows updated.
+        /// </returns>
+        public int Update<T>(T obj)
+        {
+            return _dbc == null ? 0 : _dbc.Update(obj);
+        }
+
+        public void Remove<T>(T item)
+        {
+            _dbc.Delete(item);
+        }
+
+        public int GetCount<T>() where T : new()
+        {
+            return _dbc.Table<T>().Count();
+        }
+
+        public void DeleteAll<T>()
+        {
+            _dbc.DeleteAll<T>();
         }
     }
 

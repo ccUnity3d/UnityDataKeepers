@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Collections;
+using DataKeepers.DataBase;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,140 +9,52 @@ using UnityEngine.Events;
 namespace DataKeepers
 {
     [Serializable]
-    public class Keeper<T, I> : SerializableCharpSingleton<T>, IEnumerable<I> where T : class where I : KeeperItem
+    public class Keeper<TKeeper, TItem> : SerializableCharpSingleton<TKeeper>, IEnumerable<TItem> where TKeeper : class where TItem : KeeperItem, new()
     {
-        private class KeeperInnerItem
+        private static DataKeepersDbConnector _dataConnector = null;
+
+        protected Keeper()
         {
-            public readonly List<I> Items;
-
-            public KeeperInnerItem(I item)
-            {
-                Items = new List<I> {item};
-            }
+            if (_dataConnector != null) return;
+            _dataConnector = new DataKeepersDbConnector();
+            _dataConnector.ConnectToDefaultStorage();
         }
-
-        private class SerializedData
-        {
-            public string Type;
-            public Dictionary<string, KeeperInnerItem> Items;
-        }
-
-        private readonly Dictionary<string, KeeperInnerItem> _items = new Dictionary<string, KeeperInnerItem>(); 
 
         public KeeperItemEvent OnAddItem = new KeeperItemEvent();
         public KeeperItemEvent OnDeleteItem = new KeeperItemEvent();
 
-        public virtual string ConfigPath
+        public TItem GetById(string id)
         {
-            get { return string.Format("{0}/Keepers/{1}.json", Application.streamingAssetsPath, GetType().Name); }
+            var result = _dataConnector.GetQuery<TItem>(i=>i.Id == id);
+            return result.Count > 0 ? result[0] : null;
         }
 
-        protected virtual bool EnableSelfLoading
+        public List<TItem> GetAllById(string id)
         {
-            get { return false; }
+            return _dataConnector.GetQuery<TItem>(i=>i.Id == id);
         }
 
-        protected virtual bool EnableStaticLoading
+        public List<TItem> FindAll(Predicate<TItem> predicate)
         {
-            get { return true; }
+            return _dataConnector.GetQuery(predicate);
         }
 
-        protected override void OnInit()
-        {
-            base.OnInit();
-            if (EnableSelfLoading)
-            {
-                if (EnableStaticLoading)
-                {
-                    KeepersLoader.Instance.LoadKeeperFormFile(ConfigPath);
-                }
-                else
-                {
-                    SelfLoad();
-                }
-            }
-        }
-
-        public virtual void SelfSave()
-        {
-            string saveResult = JsonConvert.SerializeObject(new SerializedData { Type = GetType().Name, Items = _items });
-            PlayerPrefs.SetString(ConfigPath, saveResult);
-            PlayerPrefs.Save();
-        }
-
-        protected virtual void SelfLoad()
-        {
-            string json = PlayerPrefs.GetString(ConfigPath, "");
-            if (!string.IsNullOrEmpty(json))
-            {
-                var serializedData = JsonConvert.DeserializeObject(json, typeof(SerializedData)) as SerializedData;
-                _items.Clear();
-
-                if (serializedData == null) return;
-                foreach (var kvp in serializedData.Items)
-                {
-                    //for some reason deserialization adds null element
-                    kvp.Value.Items.RemoveAt(0);
-                    _items[kvp.Key] = kvp.Value;
-                }
-            }
-	
-        }
-
-        public I GetById(string id)
-        {
-            KeeperInnerItem result;
-            if (!_items.TryGetValue(id, out result)) return null;
-            return result.Items.Count > 0 ? result.Items[0] : null;
-        }
-
-        public List<I> GetAllById(string id)
-        {
-            KeeperInnerItem result;
-            return _items.TryGetValue(id, out result) ? result.Items : new List<I>();
-        }
-
-        public List<I> FindAll(Func<I, bool> predicate)
-        {
-            List<I> result = new List<I>();
-
-            foreach (var item in this)
-            {
-                if (predicate(item))
-                {
-                    result.Add(item);
-                }
-            }
-
-            return result;
-        }
-
-        public virtual bool Add(I item)
+        public virtual bool Add(TItem item)
         {
             if (!Validate(item)) return false;
-            KeeperInnerItem currentInnerItem;
-            _items.TryGetValue(item.Id, out currentInnerItem);
-            if (currentInnerItem  != null)
-            {
-                currentInnerItem.Items.Add(item);
-            }
-            else
-            {
-                _items.Add(item.Id, new KeeperInnerItem(item));
-            }
-
             try
             {
-                OnAddItem.Invoke(item);
+                _dataConnector.Insert(item);
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                Debug.Log("Can't insert object " + item.Justify() + " because error: " + e.Message);
+                return false;
             }
             return true;
         }
 
-        public virtual int Add(IEnumerable<I> items)
+        public virtual int Add(IEnumerable<TItem> items)
         {
             if (items == null) return 0;
             int c = 0;
@@ -150,23 +63,20 @@ namespace DataKeepers
             return c;
         }
 
-        public virtual bool Remove(I i)
+        public virtual bool Remove(TItem i)
         {
-            if (!_items.ContainsKey(i.Id)) return false;
-            if (!_items[i.Id].Items.Contains(i)) return true;
-            _items[i.Id].Items.Remove(i);
             try
             {
-                OnDeleteItem.Invoke(i);
+                _dataConnector.Remove(i);
+                return true;
             }
-            catch(Exception e)
+            catch (Exception)
             {
-                Debug.Log("OnDeleteItem exception " + e);
+                return false;
             }
-            return true;
         }
 
-        public virtual int Remove(IEnumerable<I> items)
+        public virtual int Remove(IEnumerable<TItem> items)
         {
             var c = 0;
             foreach (var i in items)
@@ -174,33 +84,38 @@ namespace DataKeepers
             return c;
         }
 
-        protected virtual bool Validate(I obj)
+        protected virtual bool Validate(TItem obj)
         {
             return true;
         }
 
         public int Count()
         {
-            var count = 0;
-            for (var i = GetEnumerator(); i.MoveNext();)
-                count++;
-            return count;
+            try
+            {
+                return _dataConnector.GetCount<TItem>();
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         public virtual void Clear()
         {
-            _items.Clear();
+            try
+            {
+                _dataConnector.DeleteAll<TItem>();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
-        public IEnumerator<I> GetEnumerator()
+        public IEnumerator<TItem> GetEnumerator()
         {
-            foreach (var keeperInnerItem in _items)
-            {
-                foreach (var item in keeperInnerItem.Value.Items)
-                {
-                    yield return item;
-                }
-            }
+            return FindAll(i => true).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
