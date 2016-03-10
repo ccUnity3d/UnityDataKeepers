@@ -21,3 +21,6 @@ UnityDataKeepersProj/*.pidb.meta
 UnityDataKeepersProj/*sysinfo.txt
 UnityDataKeepersProj/Assets/DeveloperPlugins/
 UnityDataKeepersProj/Assets/DeveloperPlugins.meta
+UnityDataKeepersProj/Assets/StreamingAssets/DataKeepers/
+UnityDataKeepersProj/Assets/Scripts/Generated/
+UnityDataKeepersProj/Assets/Scripts/Generated.meta

@@ -1,42 +1,37 @@
-﻿using DataKeepers;
-using SQLite;
+﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class InitTest : MonoBehaviour
 {
-    [ContextMenu("Connection test")]
-    public void Test()
-    {
-        Debug.Log(string.Format("Path of db: {0}",DataKeepersPaths.DataBasePath));
-        Debug.Log(string.Format("Is db exists? {0}", DataKeepersPaths.Exists));
+    public Text TestLog;
 
-        Debug.Log("Connection...");
-        var conn = DataKeepersDB.Instance.Connect();
-        Debug.Log("Connected? "+(conn!=null));
+    void Awake()
+    {
+        try
+        {
+            var id = "text1";
+            var loc = LocalizationKeeper.Instance.GetById(id);
+            TestLog.text += string.Format("\nlocalization for id {0}: {1}", id, loc == null ? "null" : loc.Justify());
+            TestLog.text += string.Format("\nresource for id {0}: {1}", "wood", ResourcesKeeper.Instance.GetById("wood"));
+            TestLog.text += string.Format("\nresource for id {0}: {1}", "wood2", ResourcesKeeper.Instance.GetById("wood2"));
+
+            var res = ResourcesKeeper.Instance.GetById("wood");
+            res.DebugDescription += ((int)(Random.value * 10)).ToString();
+            ResourcesKeeper.Instance.Update(res);
+            TestLog.text += string.Format("\nresource for id {0}: {1}", "wood", ResourcesKeeper.Instance.GetById("wood"));
+
+        }
+        catch (Exception e)
+        {
+            TestLog.text += "\nERROR: " + e.Message;
+        }
     }
 
-    public class TestData
+    public void Restart()
     {
-        public TestData()
-        {
-            Id = "Id" + Random.value;
-            NumData = (int) (Random.value*100);
-            FloatData = Random.value;
-        }
-
-        [PrimaryKey] public string Id { get; set; }
-        public int NumData { get; set; }
-        public float FloatData { get; set; }
-    }
-
-    [ContextMenu("Create table test")]
-    public void CreateTableTest()
-    {
-        if (!DataKeepersDB.Instance.Connected)
-        {
-            DataKeepersDB.Instance.Connect();
-        }
-        DataKeepersDB.Instance.GetConnection().CreateTable<TestData>();
-        DataKeepersDB.Instance.GetConnection().Insert(new TestData());
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
