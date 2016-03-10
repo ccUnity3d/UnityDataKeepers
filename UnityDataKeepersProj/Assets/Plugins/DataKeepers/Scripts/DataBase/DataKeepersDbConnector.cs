@@ -84,7 +84,7 @@ namespace DataKeepers.DataBase
        
             var dbPath = filepath;
 #endif
-            Debug.Log("Final PATH: " + dbPath);
+//            Debug.Log("Final PATH: " + dbPath);
             _dbc = new SQLiteConnection(dbPath);
         }
 
