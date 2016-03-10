@@ -232,7 +232,13 @@ namespace DataKeepers.Manager
                 if (mi.Length > 0) continue;
                 CodeMemberField field = new CodeMemberField();
                 field.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-                field.Name = member.Key;
+                if (member.Key.StartsWith("!"))
+                {
+                    field.Name = member.Key.Substring(1);
+                    field.CustomAttributes.Add(new CodeAttributeDeclaration("SQLite.PrimaryKey"));
+                }
+                else
+                    field.Name = member.Key; 
                 field.Name += " { get; set; }";
                 try
                 {
@@ -386,13 +392,18 @@ namespace DataKeepers.Manager
 
         private string CreateIntestItemQuery(Dictionary<string, object> item)
         {
-            var names = item.Where(pair => pair.Key != "Type").Select(pair => pair.Key).ToArray();
+            var names =
+                item.Where(pair => pair.Key != "Type")
+                    .Select(pair => pair.Key.StartsWith("!") ? pair.Key.Substring(1) : pair.Key)
+                    .ToArray();
             var values =
                 item.Where(pair => pair.Key != "Type")
                     .Select(pair => string.Format("'{0}'", pair.Value))
                     .ToArray();
-            return string.Format("INSERT INTO {0} ({1}) VALUES ({2})", item["Type"], string.Join(",", names),
+            string insertQuery = string.Format("INSERT INTO {0} ({1}) VALUES ({2})", item["Type"], string.Join(",", names),
                 string.Join(",", values));
+//            Debug.Log(insertQuery);
+            return insertQuery;
         }
 
         private void RewriteActualDataSignatures(List<Dictionary<string, string>> keepers, List<Dictionary<string, string>> items)
@@ -418,6 +429,7 @@ namespace DataKeepers.Manager
                 {
                     current.DropTableIfExists(item["Type"]);
                     var query = GenerateCreateTableQueryFromSignature(item);
+//                    Debug.Log(query);
                     if (!current.Query(query))
                         Debug.Log("Error when executing creating of table " + item["Type"]);
                 }
@@ -432,8 +444,8 @@ namespace DataKeepers.Manager
 
         private string GenerateCreateTableQueryFromSignature(Dictionary<string, string> item)
         {
-            var attrs = new string[item.Count-1];
-            var pos = 0;
+            var attrs = new List<string>();
+            var pk = new List<string>();
             foreach (var data in item)
             {
                 if (data.Key == "Type") continue;
@@ -444,9 +456,14 @@ namespace DataKeepers.Manager
                 else if (type == typeof(long).FullName) type = "BIGINT";
                 else if (type == typeof(float).FullName) type = "FLOAT";
                 else type = "VARCHAR";
-                attrs[pos++] = string.Format("{0} {1}", data.Key, type);
+                var attrName = data.Key.StartsWith("!") ? data.Key.Substring(1) : data.Key;
+                if (data.Key.StartsWith("!"))
+                    pk.Add(attrName);
+                attrs.Add(string.Format("{0} {1}", attrName, type));
             }
-            var q = string.Format("CREATE TABLE {0} ({1});", item["Type"], string.Join(",", attrs));
+            if (pk.Count>0)
+                attrs.Add(string.Format("PRIMARY KEY({0})",string.Join(",",pk.ToArray())));
+            var q = string.Format("CREATE TABLE {0} ({1});", item["Type"], string.Join(",", attrs.ToArray()));
             return q;
         }
 
