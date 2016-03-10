@@ -113,6 +113,18 @@ namespace DataKeepers
             }
         }
 
+        public virtual void Update(TItem item)
+        {
+            try
+            {
+                _dataConnector.Update(item);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         public IEnumerator<TItem> GetEnumerator()
         {
             return FindAll(i => true).GetEnumerator();
