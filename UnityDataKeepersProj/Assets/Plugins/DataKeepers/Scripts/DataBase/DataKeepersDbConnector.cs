@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Mono.Data.Sqlite;
+//#if !(UNITY_ANDROID && !UNITY_EDITOR)
+using Mono.Data.Sqlite; 
+//#endif
 using SQLite;
 
 namespace DataKeepers.DataBase
