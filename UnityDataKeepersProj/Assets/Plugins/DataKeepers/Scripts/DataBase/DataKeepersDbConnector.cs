@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-//#if !(UNITY_ANDROID && !UNITY_EDITOR)
 using Mono.Data.Sqlite; 
-//#endif
 using SQLite;
+using UnityEngine;
 
 namespace DataKeepers.DataBase
 {
@@ -23,7 +22,70 @@ namespace DataKeepers.DataBase
 
         public void ConnectToDefaultStorage()
         {
-            ConnectTo(DataKeepersPaths.DataBasePath);
+            //            ConnectTo(DataKeepersPaths.DataBasePath);
+
+            var DatabaseName = DataKeepersPaths.DataBasePathInStreamingAssets;
+
+#if UNITY_EDITOR
+
+            var dir = Path.GetDirectoryName(DatabaseName);
+            if (dir != null && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            var dbPath = string.Format(@"Assets/StreamingAssets/{0}", DatabaseName);
+#else
+            // check if file exists in Application.persistentDataPath
+            var filepath = string.Format("{0}/{1}", Application.persistentDataPath, DatabaseName);
+       
+            if (!File.Exists(filepath))
+            {
+                var dir = Path.GetDirectoryName(filepath);
+                if (dir != null && !Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                Debug.Log("Database not in Persistent path");
+                // if it doesn't ->
+                // open StreamingAssets directory and load the db ->
+
+#if UNITY_ANDROID
+                try
+                {
+                    Debug.Log("Start loading keepers from '" + "jar:file://" + Application.dataPath + "!/assets/" + DatabaseName + "'");
+                    var loadDb = new WWW("jar:file://" + Application.dataPath + "!/assets/" + DatabaseName);  // this is the path to your StreamingAssets in android
+                    while (!loadDb.isDone) { }  // CAREFUL here, for safety reasons you shouldn't let this while loop unattended, place a timer and error check
+                    // then save to Application.persistentDataPath
+                    Debug.Log("Successfully loaded! Start writing to " + "'" + filepath + "'");
+                    File.WriteAllBytes(filepath, loadDb.bytes);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error when reading keepers: "+e.Message);
+                }
+#elif UNITY_IOS
+                var loadDb = Application.dataPath + "/Raw/" + DatabaseName;  // this is the path to your StreamingAssets in iOS
+                // then save to Application.persistentDataPath
+                File.Copy(loadDb, filepath);
+#elif UNITY_WP8
+                var loadDb = Application.dataPath + "/StreamingAssets/" + DatabaseName;  // this is the path to your StreamingAssets in iOS
+                // then save to Application.persistentDataPath
+                File.Copy(loadDb, filepath);
+           
+#elif UNITY_WINRT
+                var loadDb = Application.dataPath + "/StreamingAssets/" + DatabaseName;  // this is the path to your StreamingAssets in iOS
+                // then save to Application.persistentDataPath
+                File.Copy(loadDb, filepath);
+#endif
+           
+                Debug.Log("Database written");
+            }
+       
+            var dbPath = filepath;
+#endif
+            Debug.Log("Final PATH: " + dbPath);
+            _dbc = new SQLiteConnection(dbPath);
         }
 
         private void CreateEmpty()

@@ -19,6 +19,14 @@ namespace DataKeepers.DataBase
             }
         }
 
+        public static string DataBasePathInStreamingAssets
+        {
+            get
+            {
+                return String.Format("{0}/{1}", "DataKeepers", DefaultDataBasePath);
+            }
+        }
+
         private static string DataKeepersDir
         {
             get { return Path.Combine(Application.streamingAssetsPath, "DataKeepers"); }
