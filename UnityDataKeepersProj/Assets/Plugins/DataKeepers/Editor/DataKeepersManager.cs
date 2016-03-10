@@ -398,7 +398,7 @@ namespace DataKeepers.Manager
                     .ToArray();
             var values =
                 item.Where(pair => pair.Key != "Type")
-                    .Select(pair => string.Format("'{0}'", pair.Value))
+                    .Select(pair => string.Format("'{0}'", pair.Value.ToString().Replace("'","''")))
                     .ToArray();
             string insertQuery = string.Format("INSERT INTO {0} ({1}) VALUES ({2})", item["Type"], string.Join(",", names),
                 string.Join(",", values));
