@@ -44,6 +44,12 @@ namespace DataKeepers
         {
             return _dataConnector.GetQuery(predicate);
         }
+        public TItem Find(Predicate<TItem> predicate)
+        {
+            var all = FindAll(predicate);
+            if (all.Count < 1) return null;
+            return all[0];
+        }
 
         public virtual bool Add(TItem item)
         {
