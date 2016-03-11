@@ -15,9 +15,15 @@ namespace DataKeepers
 
         protected Keeper()
         {
-            if (_dataConnector != null) return;
-            _dataConnector = new DataKeepersDbConnector();
-            _dataConnector.ConnectToDefaultStorage();
+            if (_dataConnector == null)
+            {
+                _dataConnector = new DataKeepersDbConnector();
+                _dataConnector.ConnectToDefaultStorage();
+            }
+            if (!_dataConnector.TableExists<TItem>())
+            {
+                _dataConnector.CreateTable<TItem>();
+            }
         }
 
         public KeeperItemEvent OnAddItem = new KeeperItemEvent();
