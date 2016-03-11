@@ -202,6 +202,11 @@ namespace DataKeepers.DataBase
         {
             _dbc.DeleteAll<T>();
         }
+
+        public bool TableExists<T>()
+        {
+            return GetTablesInfos().Exists(t => t.Name == typeof (T).Name);
+        }
     }
 
     public class TableInfo
