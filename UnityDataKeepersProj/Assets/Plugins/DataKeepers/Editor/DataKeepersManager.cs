@@ -183,6 +183,10 @@ namespace DataKeepers.Manager
 
         private static void ClearGeneratedDirectory()
         {
+            if (!Directory.Exists(GeneratedFilesDir))
+            {
+                Directory.CreateDirectory(GeneratedFilesDir);
+            }
             foreach (var path in Directory.GetFiles(GeneratedFilesDir))
             {
                 File.Delete(path);

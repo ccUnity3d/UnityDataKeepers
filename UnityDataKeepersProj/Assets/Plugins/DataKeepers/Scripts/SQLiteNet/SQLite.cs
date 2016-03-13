@@ -506,7 +506,7 @@ namespace SQLite
 
             // Build query.
 			var query = "create " + @virtual + "table if not exists \"" + map.TableName + "\" " + @using + "(\n";
-			var decls = map.Columns.Select (p => Orm.SqlDecl (p, StoreDateTimeAsTicks));
+			var decls = map.Columns.Select (p => Orm.SqlDecl (p, StoreDateTimeAsTicks, true));
 			var decl = string.Join (",\n", decls.ToArray ());
 			query += decl;
 			query += ")";
@@ -679,7 +679,7 @@ namespace SQLite
 			}
 			
 			foreach (var p in toBeAdded) {
-				var addCol = "alter table \"" + map.TableName + "\" add column " + Orm.SqlDecl (p, StoreDateTimeAsTicks);
+				var addCol = "alter table \"" + map.TableName + "\" add column " + Orm.SqlDecl (p, StoreDateTimeAsTicks, false);
 				Execute (addCol);
 			}
 		}
@@ -2090,25 +2090,29 @@ namespace SQLite
         public const string ImplicitPkName = "Id";
         public const string ImplicitIndexSuffix = "Id";
 
-		public static string SqlDecl (TableMapping.Column p, bool storeDateTimeAsTicks)
-		{
-			string decl = "\"" + p.Name + "\" " + SqlType (p, storeDateTimeAsTicks) + " ";
-			
-			if (p.IsPK) {
-				decl += "primary key ";
-			}
-			if (p.IsAutoInc) {
-				decl += "autoincrement ";
-			}
-			if (!p.IsNullable) {
-				decl += "not null ";
-			}
-			if (!string.IsNullOrEmpty (p.Collation)) {
-				decl += "collate " + p.Collation + " ";
-			}
-			
-			return decl;
-		}
+        public static string SqlDecl(TableMapping.Column p, bool storeDateTimeAsTicks, bool ignorePrimary)
+        {
+            string decl = "\"" + p.Name + "\" " + SqlType(p, storeDateTimeAsTicks) + " ";
+
+            if (p.IsPK && !ignorePrimary)
+            {
+                decl += "primary key ";
+            }
+            if (p.IsAutoInc)
+            {
+                decl += "AUTO_INCREMENT ";
+            }
+            if (!p.IsNullable)
+            {
+                decl += "not null ";
+            }
+            if (!string.IsNullOrEmpty(p.Collation))
+            {
+                decl += "collate " + p.Collation + " ";
+            }
+
+            return decl;
+        }
 
 		public static string SqlType (TableMapping.Column p, bool storeDateTimeAsTicks)
 		{
