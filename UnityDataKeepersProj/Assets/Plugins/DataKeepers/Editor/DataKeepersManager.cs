@@ -348,8 +348,10 @@ namespace DataKeepers.Manager
         {
             try
             {
-                var current = new DataKeepersDbConnector();
-                current.ConnectToDefaultStorage();
+                var streaming = new DataKeepersDbConnector();
+                var local = new DataKeepersDbConnector();
+                streaming.ConnectToStreamingStorage();
+                local.ConnectToLocalStorage();
 
                 var reading = false;
                 var objectLevel = 0;
@@ -365,7 +367,8 @@ namespace DataKeepers.Manager
                                 objectLevel--;
                                 var itemSignature = ReadItemValues(reader);
                                 var query = CreateIntestItemQuery(itemSignature);
-                                current.Query(query);
+                                streaming.Query(query);
+                                local.Query(query);
                             }
                             break;
 
@@ -385,7 +388,8 @@ namespace DataKeepers.Manager
                     }
                 }
 
-                current.Close();
+                streaming.Close();
+                local.Close();
                 Debug.Log("Current data pushed successfully!");
             }
             catch (Exception e)
@@ -414,10 +418,14 @@ namespace DataKeepers.Manager
         {
             try
             {
-                DataKeepersDbConnector current = new DataKeepersDbConnector();
-                current.ConnectToDefaultStorage();
-                current.DropTableIfExists(typeof (KeeperSignature).Name);
-                current.CreateTable<KeeperSignature>();
+                DataKeepersDbConnector streaming = new DataKeepersDbConnector();
+                DataKeepersDbConnector local = new DataKeepersDbConnector();
+                local.ConnectToLocalStorage();
+                local.DropTableIfExists(typeof (KeeperSignature).Name);
+                local.CreateTable<KeeperSignature>();
+                streaming.ConnectToStreamingStorage();
+                streaming.DropTableIfExists(typeof (KeeperSignature).Name);
+                streaming.CreateTable<KeeperSignature>();
                 // generate sql
                 foreach (var keeper in keepers)
                 {
@@ -426,18 +434,23 @@ namespace DataKeepers.Manager
                         KeeperName = keeper["Type"],
                         ItemType = keeper["Items"]
                     };
-                    current.Insert(kSignature);
+                    local.Insert(kSignature);
+                    streaming.Insert(kSignature);
                 }
 
                 foreach (var item in items)
                 {
-                    current.DropTableIfExists(item["Type"]);
+                    local.DropTableIfExists(item["Type"]);
+                    streaming.DropTableIfExists(item["Type"]);
                     var query = GenerateCreateTableQueryFromSignature(item);
 //                    Debug.Log(query);
-                    if (!current.Query(query))
+                    if (!local.Query(query))
+                        Debug.Log("Error when executing creating of table " + item["Type"]);
+                    if (!streaming.Query(query))
                         Debug.Log("Error when executing creating of table " + item["Type"]);
                 }
-                current.Close();
+                local.Close();
+                streaming.Close();
                 Debug.Log("Current signatures rewrited successfully!");
             }
             catch (Exception e)
