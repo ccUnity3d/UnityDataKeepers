@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using DataKeepers.DataBase;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -40,15 +39,21 @@ namespace DataKeepers
             return _dataConnector.GetQuery<TItem>(i=>i.Id == id);
         }
 
-        public List<TItem> FindAll(Predicate<TItem> predicate)
+        public List<TItem> GetAll()
         {
-            return _dataConnector.GetQuery(predicate);
+            return FindAll(i => true);
         }
+
         public TItem Find(Predicate<TItem> predicate)
         {
             var all = FindAll(predicate);
             if (all.Count < 1) return null;
             return all[0];
+        }
+
+        public List<TItem> FindAll(Predicate<TItem> predicate)
+        {
+            return _dataConnector.GetQuery(predicate);
         }
 
         public virtual bool Add(TItem item)
@@ -131,8 +136,23 @@ namespace DataKeepers
             {
                 _dataConnector.Update(item);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.LogError(string.Format("Error when updating object {0}: {1}", item.Justify(), e.Message));
+                // ignored
+            }
+        }
+
+        public virtual void InsertOrUpdate(TItem item)
+        {
+            try
+            {
+                if (_dataConnector.Update(item) == 0)
+                    _dataConnector.Insert(item);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(string.Format("Error when updating object {0}: {1}", item.Justify(), e.Message));
                 // ignored
             }
         }
