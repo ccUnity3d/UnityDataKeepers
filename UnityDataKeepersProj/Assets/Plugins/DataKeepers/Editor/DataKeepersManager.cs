@@ -232,8 +232,20 @@ namespace DataKeepers.Manager
                 if (member.Key == "Type")
                     continue;
 
-                MemberInfo[] mi = baseType.GetMember(member.Key);
-                if (mi.Length > 0) continue;
+                var exists = false;
+                var memberName = member.Key.StartsWith("!") ? member.Key.Substring(1) : member.Key;
+                var t = baseType;
+                while (t!=null)
+                {
+                    var mi = baseType.GetMember(memberName);
+                    if (mi.Length > 0)
+                    {
+                        exists = true;
+                        break;
+                    }
+                    t = t.BaseType;
+                }
+                if (exists) continue;
                 CodeMemberField field = new CodeMemberField();
                 field.Attributes = MemberAttributes.Public | MemberAttributes.Final;
                 if (member.Key.StartsWith("!"))
