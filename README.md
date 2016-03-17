@@ -1,5 +1,5 @@
 # UnityDataKeepers
-Текущая версия: 0.0.1
+Текущая версия: 0.0.5
 
 UnityDataKeepers - инструмент, созданный для легкого управлениия данными приложения. 
 
@@ -74,6 +74,12 @@ UnityDataKeepers состоит из двух частей:
 - **Remove** - удаляет выбранную версию загруженных ранее таблиц
 
 # Обновления
+
+Version 0.0.5
+* FEATURE: Additional default keeper getters
+* FEATURE: Local editor DB3 file now locate at Temp directory
+* FIX: ORM multi-PK generation
+* FIX: PK field at class don't overload KeeperItem and base classes
 
 Version 0.0.1
 * Пофишкена генерация составных первичных ключей в ORM
