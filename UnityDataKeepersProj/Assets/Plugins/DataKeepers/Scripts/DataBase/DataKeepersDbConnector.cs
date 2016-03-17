@@ -19,8 +19,24 @@ namespace DataKeepers.DataBase
                 _dbc.Close();
             }
         }
+        
+#if UNITY_EDITOR
+        public void ConnectToStreamingStorage()
+        {
+            var DatabaseName = DataKeepersPaths.DataBasePathInStreamingAssets;
 
-        public void ConnectToDefaultStorage()
+
+            var dbPath = string.Format(@"Assets/StreamingAssets/{0}", DatabaseName);
+            var dir = Path.GetDirectoryName(dbPath);
+            if (dir != null && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            _dbc = new SQLiteConnection(dbPath);
+        }
+#endif
+
+        public void ConnectToLocalStorage()
         {
             //            ConnectTo(DataKeepersPaths.DataBasePath);
 
@@ -28,12 +44,22 @@ namespace DataKeepers.DataBase
 
 #if UNITY_EDITOR
 
-            var dir = Path.GetDirectoryName(DatabaseName);
+            var dbPath = string.Format(@"Temp/{0}", DatabaseName);
+            var dir = Path.GetDirectoryName(dbPath);
             if (dir != null && !Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
-            var dbPath = string.Format(@"Assets/StreamingAssets/{0}", DatabaseName);
+            if (!File.Exists(dbPath))
+            {
+                string streamingDbPath = string.Format(@"Assets/StreamingAssets/{0}", DatabaseName);
+                if (File.Exists(streamingDbPath))
+                    File.Copy(streamingDbPath, dbPath);
+                else
+                {
+                    Debug.LogError("Can't find keepers DB file in Temp and StreamingAssets dirs. Use DataKeepersManager to set actual version.");
+                }
+            }
 #else
             // check if file exists in Application.persistentDataPath
             var filepath = string.Format("{0}/{1}", Application.persistentDataPath, DatabaseName);
@@ -164,7 +190,8 @@ namespace DataKeepers.DataBase
 
         public List<T> GetQuery<T>(Predicate<T> selectIf) where T : new()
         {
-            return GetQuery<T>().FindAll(selectIf);
+            var all = GetQuery<T>();
+            return all.FindAll(selectIf);
         }
 
         public List<T> GetQuery<T>() where T : new()

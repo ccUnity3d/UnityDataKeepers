@@ -508,6 +508,9 @@ namespace SQLite
 			var query = "create " + @virtual + "table if not exists \"" + map.TableName + "\" " + @using + "(\n";
 			var decls = map.Columns.Select (p => Orm.SqlDecl (p, StoreDateTimeAsTicks, true));
 			var decl = string.Join (",\n", decls.ToArray ());
+		    var pks = map.Columns.Where(p => p.IsPK).Select(p => p.Name);
+		    if (pks.Any())
+		        decl = string.Join(",", new[] {decl, string.Format("primary key({0})", string.Join(",", pks.ToArray()))});
 			query += decl;
 			query += ")";
 			
@@ -2090,29 +2093,25 @@ namespace SQLite
         public const string ImplicitPkName = "Id";
         public const string ImplicitIndexSuffix = "Id";
 
-        public static string SqlDecl(TableMapping.Column p, bool storeDateTimeAsTicks, bool ignorePrimary)
-        {
-            string decl = "\"" + p.Name + "\" " + SqlType(p, storeDateTimeAsTicks) + " ";
-
-            if (p.IsPK && !ignorePrimary)
-            {
-                decl += "primary key ";
-            }
-            if (p.IsAutoInc)
-            {
+		public static string SqlDecl (TableMapping.Column p, bool storeDateTimeAsTicks, bool ignorePrimary)
+		{
+			string decl = "\"" + p.Name + "\" " + SqlType (p, storeDateTimeAsTicks) + " ";
+			
+			if (p.IsPK && !ignorePrimary) {
+				decl += "primary key ";
+			}
+			if (p.IsAutoInc) {
                 decl += "AUTO_INCREMENT ";
-            }
-            if (!p.IsNullable)
-            {
-                decl += "not null ";
-            }
-            if (!string.IsNullOrEmpty(p.Collation))
-            {
-                decl += "collate " + p.Collation + " ";
-            }
-
-            return decl;
-        }
+			}
+			if (!p.IsNullable) {
+				decl += "not null ";
+			}
+			if (!string.IsNullOrEmpty (p.Collation)) {
+				decl += "collate " + p.Collation + " ";
+			}
+			
+			return decl;
+		}
 
 		public static string SqlType (TableMapping.Column p, bool storeDateTimeAsTicks)
 		{
