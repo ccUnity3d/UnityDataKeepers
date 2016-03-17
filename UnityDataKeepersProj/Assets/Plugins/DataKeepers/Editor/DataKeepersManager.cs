@@ -641,6 +641,7 @@ namespace DataKeepers.Manager
                     try
                     {
                         var version = new KeeperVersion(www.text);
+                        version.Id = _editorData.GetVersionsCount() + 1;
                         _editorData.SaveKeeperVersion(version);
                         Debug.Log(string.Format("Keeper was loaded and saved!\nLoaded data:\n{0}",www.text));
                         Repaint();
@@ -663,7 +664,7 @@ namespace DataKeepers.Manager
 
     public class KeeperVersion
     {
-        [PrimaryKey,AutoIncrement]
+        [PrimaryKey]
         public int Id { get; set; }
         public DateTime LoadingDateTime { get; set; }
         public string KeeperJson { get; set; }
@@ -711,6 +712,11 @@ namespace DataKeepers.Manager
         public void Remove(KeeperVersion version)
         {
             _dbEditor.Table<KeeperVersion>().Delete(v => v.Id == version.Id);
+        }
+
+        public int GetVersionsCount()
+        {
+            return _dbEditor.Table<KeeperVersion>().Count();
         }
     }
 }
