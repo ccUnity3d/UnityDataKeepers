@@ -17,7 +17,7 @@ namespace DataKeepers
             if (_dataConnector == null)
             {
                 _dataConnector = new DataKeepersDbConnector();
-                _dataConnector.ConnectToDefaultStorage();
+                _dataConnector.ConnectToLocalStorage();
             }
             if (!_dataConnector.TableExists<TItem>())
             {
