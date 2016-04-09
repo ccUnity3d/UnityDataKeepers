@@ -103,6 +103,10 @@ namespace DataKeepers.DataBase
                 var loadDb = Application.dataPath + "/StreamingAssets/" + DatabaseName;  // this is the path to your StreamingAssets in iOS
                 // then save to Application.persistentDataPath
                 File.Copy(loadDb, filepath);
+#elif UNITY_STANDALONE_WIN
+                var loadDb = Application.dataPath + "/StreamingAssets/" + DatabaseName;
+                // then save to Application.persistentDataPath
+                File.Copy(loadDb, filepath);
 #endif
            
                 Debug.Log("Database written");
