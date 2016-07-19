@@ -24,3 +24,7 @@ UnityDataKeepersProj/Assets/DeveloperPlugins.meta
 UnityDataKeepersProj/Assets/StreamingAssets/DataKeepers/
 UnityDataKeepersProj/Assets/Scripts/Generated/
 UnityDataKeepersProj/Assets/Scripts/Generated.meta
+
+UnityDataKeepersCore/UnityDataKeepers/obj/
+UnityDataKeepersCore/UnityDataKeeperTests/obj/
+UnityDataKeepersCore/UnityDataKeepers.v12.suo
