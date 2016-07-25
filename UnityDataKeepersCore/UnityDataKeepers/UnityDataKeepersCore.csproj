@@ -39,8 +39,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Core\Events\AddKeeperItemEvent.cs" />
+    <Compile Include="Core\Model\DataDataKeeper.cs" />
+    <Compile Include="Core\Model\DataProvider.cs" />
+    <Compile Include="Core\Model\Factories\KeepersFactory.cs" />
+    <Compile Include="Core\Model\Interfaces\IDataKeeper.cs" />
+    <Compile Include="Core\Model\Interfaces\IDataKeeperItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

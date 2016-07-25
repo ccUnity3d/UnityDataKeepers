@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnityDataKeeperTests
+namespace UnityDataKeeperTests.BlsackBox
 {
     [TestClass]
-    public class UnitTest1
+    public class KeeperItemTests
     {
         [TestMethod]
         public void TestMethod1()
