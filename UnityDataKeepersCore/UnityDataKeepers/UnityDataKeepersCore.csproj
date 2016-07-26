@@ -39,12 +39,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\BackendConnection\IConnectionProtocol.cs" />
+    <Compile Include="Core\BackendConnection\ISecureProvider.cs" />
+    <Compile Include="Core\DataKeepersSettings.cs" />
     <Compile Include="Core\Events\AddKeeperItemEvent.cs" />
-    <Compile Include="Core\Model\DataDataKeeper.cs" />
+    <Compile Include="Core\DataKeeper.cs" />
     <Compile Include="Core\Model\DataProvider.cs" />
-    <Compile Include="Core\Model\Factories\KeepersFactory.cs" />
-    <Compile Include="Core\Model\Interfaces\IDataKeeper.cs" />
-    <Compile Include="Core\Model\Interfaces\IDataKeeperItem.cs" />
+    <Compile Include="Core\KeepersFactory.cs" />
+    <Compile Include="Core\Model\IDataKeeper.cs" />
+    <Compile Include="Core\Model\IDataKeeperItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
