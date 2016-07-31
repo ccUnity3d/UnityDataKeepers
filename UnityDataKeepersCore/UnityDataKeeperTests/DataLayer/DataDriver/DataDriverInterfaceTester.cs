@@ -9,7 +9,7 @@ namespace UnityDataKeeperTests.BlsackBox
 {
     public class DataDriverInterfaceTester<TDriver, TItem>
         where TDriver : IRevisionDataDriver<TItem>
-        where TItem : class, IDataItem, new()
+        where TItem : class, IDataItem, IComparer<TItem>, new()
     {
 
         public void IsInInitialState(TDriver driver)
@@ -61,7 +61,7 @@ namespace UnityDataKeeperTests.BlsackBox
         public void AddMultipleTest1(TDriver driver)
         {
             var count = driver.Count();
-            var addCount = Random.Range(0, 500);
+            var addCount = 500;
             var list = Enumerable.Repeat(new TItem(), addCount);
             Assert.AreEqual(addCount,
                 driver.Add(list),
@@ -74,7 +74,7 @@ namespace UnityDataKeeperTests.BlsackBox
         public void AddMultipleTest2(TDriver driver)
         {
             var count = driver.Count();
-            var addCount = Random.Range(10, 500);
+            var addCount = 500;
             var list =
                 Enumerable.Repeat(new TItem(), addCount)
                     .Select((item, n) => n % 2 == 0
@@ -103,7 +103,7 @@ namespace UnityDataKeeperTests.BlsackBox
         public void AddMultipleTest4(TDriver driver)
         {
             var count = driver.Count();
-            var addCount = Random.Range(10, 500);
+            var addCount = 500;
             var list =
                 Enumerable.Repeat(new TItem(), addCount)
                     .Select((item, n) => n % 2 == 0
@@ -172,7 +172,7 @@ namespace UnityDataKeeperTests.BlsackBox
 
         public void RemoveMultipleTest1(TDriver driver)
         {
-            var itemsCount = Random.Range(10, 500);
+            var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
             driver.Add(items);
             var count = driver.Count();
@@ -182,7 +182,7 @@ namespace UnityDataKeeperTests.BlsackBox
 
         public void RemoveMultipleTest2(TDriver driver)
         {
-            var itemsCount = Random.Range(10, 500);
+            var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).Select((i, n) => n % 2 == 0 ? null : i).ToList();
             var goodCount = items.Count(i => i != null);
             driver.Add(items);
@@ -194,7 +194,7 @@ namespace UnityDataKeeperTests.BlsackBox
 
         public void RemoveMultipleTest3(TDriver driver)
         {
-            var itemsCount = Random.Range(10, 500);
+            var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
             driver.Add(items);
             var count = driver.Count();
@@ -226,17 +226,22 @@ namespace UnityDataKeeperTests.BlsackBox
         public void GetAllTest(TDriver driver)
         {
             IsInInitialState(driver);
-            var itemsCount = Random.Range(10, 500);
+            var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
             driver.Add(items);
-            Assert.AreEqual(items,driver.GetAll());
+            var all = driver.GetAll().ToArray();
+            Assert.AreEqual(items.Count,all.Count());
+            for (var i = 0; i < all.Count(); i++)
+            {
+                Assert.AreEqual(items[i], all[i]);
+            }
         }
 
         public void ClearTest(TDriver driver)
         {
             driver.Clear();
             Assert.AreEqual(0, driver.Count());
-            var itemsCount = Random.Range(10, 500);
+            var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
             driver.Add(items);
             driver.Clear();

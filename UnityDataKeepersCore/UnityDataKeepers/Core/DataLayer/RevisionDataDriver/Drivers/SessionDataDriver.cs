@@ -17,6 +17,10 @@ namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver.Drivers
 
         public bool Add(TItem item)
         {
+            if (item == null) 
+                return false;
+            if (_collection.Contains(item))
+                return false;
             _collection.Add(item);
             return true;
         }
@@ -28,14 +32,20 @@ namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver.Drivers
 
         public int Add(IEnumerable<TItem> items)
         {
-            var toAdd = items.SkipWhile(i => _collection.Contains(i)).ToArray();
+            if (items == null) return 0;
+            var toAdd = items.Where(i => i != null && !_collection.Contains(i)).ToList();
             _collection.AddRange(toAdd);
             return toAdd.Count();
         }
 
         public int Remove(IEnumerable<TItem> items)
         {
-            return _collection.RemoveAll(i=>items.Any(item=>item.Hash.Equals(i.Hash)));
+            if (items == null) return 0;
+            return
+                _collection.RemoveAll(
+                    i =>
+                        items.Any(
+                            item => item != null && item.Hash.Equals(i.Hash)));
         }
 
         public bool Update(TItem item)

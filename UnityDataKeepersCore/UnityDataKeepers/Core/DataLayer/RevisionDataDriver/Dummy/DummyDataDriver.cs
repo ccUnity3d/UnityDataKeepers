@@ -4,7 +4,7 @@ using UnityEngine;
 namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver
 {
     public class DummyDataDriver<TItem> : IRevisionDataDriver<TItem> 
-        where TItem : class, IDataItem
+        where TItem : class, IDataItem, IComparer<TItem>
     {
         public TItem GetByHash(Hash128 hash)
         {
