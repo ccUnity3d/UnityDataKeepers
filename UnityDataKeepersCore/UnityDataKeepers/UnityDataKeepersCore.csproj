@@ -39,8 +39,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DataLayer\RevisionDataDriver\Dummy\DummyDataDriver.cs" />
+    <Compile Include="Core\DataLayer\RevisionDataDriver\Dummy\DummyDataItem.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\IDataItem.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\IRevisionDataDriver.cs" />
+    <Compile Include="Core\DataLayer\RevisionDataDriver\RevisionDataDriverFactory.cs" />
     <Compile Include="Core\TMP\BackendConnection\IConnectionProtocol.cs" />
     <Compile Include="Core\TMP\BackendConnection\ISecureProvider.cs" />
     <Compile Include="Core\TMP\DataKeepersSettings.cs" />
