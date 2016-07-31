@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver.Drivers
 {
-    class SessionDataDriver<TItem> : 
+    public class SessionDataDriver<TItem> : 
         IRevisionDataDriver<TItem>
         where TItem : class, IDataItem, IComparer<TItem>
     {
@@ -43,6 +43,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver.Drivers
             var index = _collection.BinarySearch(item);
             if (index < 0) return false;
             _collection[index] = item;
+            return true;
         }
 
         public IEnumerable<TItem> GetAll()

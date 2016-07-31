@@ -39,6 +39,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DataLayer\RevisionDataDriver\Drivers\SessionDataDriver.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\Dummy\DummyDataDriver.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\Dummy\DummyDataItem.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\IDataItem.cs" />
