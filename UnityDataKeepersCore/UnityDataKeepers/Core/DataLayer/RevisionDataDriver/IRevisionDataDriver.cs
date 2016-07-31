@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver
 {
-    internal interface IRevisionDataDriver<T> where T : class, IDataItem
+    public interface IRevisionDataDriver<TItem> where TItem : class, IDataItem
     {
-        T GetByHash(Hash128 hash);
-        bool Add(T item);
-        bool Remove(T item);
-        int Add(IEnumerable<T> items);
-        int Remove(IEnumerable<T> items);
-        bool Update(T item);
-        IEnumerable<T> GetAll();
+        TItem GetByHash(Hash128 hash);
+        bool Add(TItem item);
+        bool Remove(TItem item);
+        int Add(IEnumerable<TItem> items);
+        int Remove(IEnumerable<TItem> items);
+        bool Update(TItem item);
+        IEnumerable<TItem> GetAll();
         void Clear();
         int Count();
     }

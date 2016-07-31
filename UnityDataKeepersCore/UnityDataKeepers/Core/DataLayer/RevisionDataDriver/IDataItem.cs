@@ -2,7 +2,7 @@
 
 namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver
 {
-    internal interface IDataItem
+    public interface IDataItem
     {
         Hash128 Hash { get; }
     }
