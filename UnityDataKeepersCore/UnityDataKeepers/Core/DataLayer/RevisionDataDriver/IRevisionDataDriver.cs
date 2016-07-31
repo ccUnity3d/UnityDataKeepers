@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver
 {
-    public interface IRevisionDataDriver<TItem> where TItem : class, IDataItem
+    public interface IRevisionDataDriver<TItem> 
+        where TItem : class, IDataItem, IComparer<TItem>
     {
         TItem GetByHash(Hash128 hash);
         bool Add(TItem item);
