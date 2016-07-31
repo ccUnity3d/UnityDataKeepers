@@ -39,20 +39,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\BackendConnection\IConnectionProtocol.cs" />
-    <Compile Include="Core\BackendConnection\ISecureProvider.cs" />
-    <Compile Include="Core\DataKeepersSettings.cs" />
-    <Compile Include="Core\Events\AddKeeperItemEvent.cs" />
-    <Compile Include="Core\DataKeeper.cs" />
-    <Compile Include="Core\Model\DataProvider.cs" />
-    <Compile Include="Core\KeepersFactory.cs" />
-    <Compile Include="Core\Model\IDataKeeper.cs" />
-    <Compile Include="Core\Model\IDataKeeperItem.cs" />
+    <Compile Include="Core\DataLayer\RevisionDataDriver\IDataItem.cs" />
+    <Compile Include="Core\DataLayer\RevisionDataDriver\IRevisionDataDriver.cs" />
+    <Compile Include="Core\TMP\BackendConnection\IConnectionProtocol.cs" />
+    <Compile Include="Core\TMP\BackendConnection\ISecureProvider.cs" />
+    <Compile Include="Core\TMP\DataKeepersSettings.cs" />
+    <Compile Include="Helpers\Events\AddKeeperItemEvent.cs" />
+    <Compile Include="Core\TMP\DataKeeper.cs" />
+    <Compile Include="Core\TMP\Model\DataProvider.cs" />
+    <Compile Include="Core\TMP\KeepersFactory.cs" />
+    <Compile Include="Core\TMP\Model\IDataKeeper.cs" />
+    <Compile Include="Core\TMP\Model\IDataKeeperItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
-    <Folder Include="Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
