@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver;
+using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using Random = UnityEngine.Random;
 
 namespace UnityDataKeeperTests.BlsackBox
 {
     public class DataDriverInterfaceTester<TDriver, TItem>
-        where TDriver : IRevisionDataDriver<TItem>
-        where TItem : class, IDataItem, IComparer<TItem>, new()
+        where TDriver : IDataCollectionDriver<TItem>
+        where TItem : class, IDataItem, new()
     {
 
         public void IsInInitialState(TDriver driver)

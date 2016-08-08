@@ -39,16 +39,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\DataLayer\RevisionDataDriver\Drivers\SessionDataDriver.cs" />
-    <Compile Include="Core\DataLayer\RevisionDataDriver\Dummy\DummyDataDriver.cs" />
-    <Compile Include="Core\DataLayer\RevisionDataDriver\Dummy\DummyDataItem.cs" />
-    <Compile Include="Core\DataLayer\RevisionDataDriver\IDataItem.cs" />
-    <Compile Include="Core\DataLayer\RevisionDataDriver\IRevisionDataDriver.cs" />
-    <Compile Include="Core\DataLayer\RevisionDataDriver\RevisionDataDriverFactory.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\SessionDataCollectionDriver.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Dummy\DummyContainerDriver.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Dummy\DummyDataItem.cs" />
+    <Compile Include="Core\DataLayer\DataCollections\IDataCollection.cs" />
+    <Compile Include="Core\DataLayer\Model\IDataItem.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\IDataCollectionDriver.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\DataCollectionDriverFactory.cs" />
     <Compile Include="Core\DataLayer\RevisionData\IRevision.cs" />
     <Compile Include="Core\DataLayer\RevisionData\IRevisionDataCollector.cs" />
-    <Compile Include="Core\DataLayer\RevisionData\IRevisionSignature.cs" />
+    <Compile Include="Core\DataLayer\DataCollections\IDataCollectionSignature.cs" />
     <Compile Include="Core\DataLayer\RevisionData\RevisionAttribute.cs" />
+    <Compile Include="Core\DataLayer\RevisionData\RevisionFactory.cs" />
     <Compile Include="Core\TMP\BackendConnection\IConnectionProtocol.cs" />
     <Compile Include="Core\TMP\BackendConnection\ISecureProvider.cs" />
     <Compile Include="Core\TMP\DataKeepersSettings.cs" />

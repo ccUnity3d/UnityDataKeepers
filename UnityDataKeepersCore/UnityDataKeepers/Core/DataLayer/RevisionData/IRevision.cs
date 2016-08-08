@@ -5,7 +5,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.RevisionData
     public interface IRevision
     {
         DateTime CreationDate { get; }
-        IRevisionSignature Signature { get; }
+        string RevisionRole { get; }
         IRevisionDataCollector DataCollector { get; }
     }
 }

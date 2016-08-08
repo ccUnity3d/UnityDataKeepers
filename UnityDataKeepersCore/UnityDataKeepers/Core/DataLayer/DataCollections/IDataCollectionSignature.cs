@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.RevisionData
 {
-    public interface IRevisionSignature
+    public interface IDataCollectionSignature : IComparable
     {
         Hash128 Hash { get; }
         IEnumerable<RevisionAttribute> Attributes { get; }

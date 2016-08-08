@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using UnityDataKeepersCore.Core.DataLayer.RevisionData;
 using UnityEngine;
 
-namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver
+namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
 {
-    public interface IRevisionDataDriver<TItem> 
-        where TItem : class, IDataItem, IComparer<TItem>
+    public interface IDataCollectionDriver<TItem>
+        where TItem : class, IDataItem
     {
         TItem GetByHash(Hash128 hash);
         bool Add(TItem item);

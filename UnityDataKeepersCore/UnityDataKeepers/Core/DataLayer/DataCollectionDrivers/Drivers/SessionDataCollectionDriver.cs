@@ -2,11 +2,11 @@
 using System.Linq;
 using UnityEngine;
 
-namespace UnityDataKeepersCore.Core.DataLayer.RevisionDataDriver.Drivers
+namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 {
-    public class SessionDataDriver<TItem> : 
-        IRevisionDataDriver<TItem>
-        where TItem : class, IDataItem, IComparer<TItem>
+    public class SessionDataCollectionDriver<TItem> : 
+        IDataCollectionDriver<TItem>
+        where TItem : class, IDataItem
     {
         private readonly List<TItem> _collection = new List<TItem>(); 
 
