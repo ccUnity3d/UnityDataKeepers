@@ -45,6 +45,10 @@
     <Compile Include="Core\DataLayer\RevisionDataDriver\IDataItem.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\IRevisionDataDriver.cs" />
     <Compile Include="Core\DataLayer\RevisionDataDriver\RevisionDataDriverFactory.cs" />
+    <Compile Include="Core\DataLayer\RevisionData\IRevision.cs" />
+    <Compile Include="Core\DataLayer\RevisionData\IRevisionDataCollector.cs" />
+    <Compile Include="Core\DataLayer\RevisionData\IRevisionSignature.cs" />
+    <Compile Include="Core\DataLayer\RevisionData\RevisionAttribute.cs" />
     <Compile Include="Core\TMP\BackendConnection\IConnectionProtocol.cs" />
     <Compile Include="Core\TMP\BackendConnection\ISecureProvider.cs" />
     <Compile Include="Core\TMP\DataKeepersSettings.cs" />
@@ -55,6 +59,7 @@
     <Compile Include="Core\TMP\Model\IDataKeeper.cs" />
     <Compile Include="Core\TMP\Model\IDataKeeperItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RevisionManger\RevisionsManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
