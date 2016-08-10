@@ -335,7 +335,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void UniqueHashes10K()
+        public void UniqueHashesSimpleAdd()
         {
             var tester =
                new DataCollectionDriverInterfaceTester
@@ -343,11 +343,11 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
                     ();
-            tester.UniqueHashes(driver,10000);
+            tester.UniqueHashesSimpleAdd(driver,1000);
         }
 
         [TestMethod]
-        public void UniqueHashes100K()
+        public void UniqueHashesListAdd()
         {
             var tester =
                new DataCollectionDriverInterfaceTester
@@ -355,7 +355,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
                     ();
-            tester.UniqueHashes(driver,100000);
+            tester.UniqueHashesListAdd(driver,1000);
         }
     }
 }

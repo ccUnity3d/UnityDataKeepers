@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityDataKeepersCore.Core.DataLayer.Model;
-using UnityEngine;
 using Random = System.Random;
 
 namespace UnityDataKeeperTests.DummyObjects
@@ -16,7 +15,7 @@ namespace UnityDataKeeperTests.DummyObjects
             OtherField
         }
 
-        public Hash128 Hash { get; private set; }
+        public Guid Hash { get; set; }
         public string StringProperty;
         public int IntProperty;
         public float FloatProperty;
@@ -26,14 +25,7 @@ namespace UnityDataKeeperTests.DummyObjects
 
         public CsvTestsDummyCollectionItem()
         {
-            Hash = new Hash128(RndUint(), RndUint(), RndUint(), RndUint());
-        }
-
-        private static uint RndUint()
-        {
-            var thirtyBits = (uint) Random.Next(1 << 30);
-            var twoBits = (uint) Random.Next(1 << 2);
-            return (thirtyBits << 2) | twoBits;
+            Hash = Guid.NewGuid();
         }
 
         public int CompareTo(object obj)

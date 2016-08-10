@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityDataKeepersCore.Core.DataLayer.Model;
-using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 {
@@ -13,7 +13,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         }
 
         public bool isReadOnly { get; private set; }
-        public TItem GetByHash(Hash128 hash)
+        public TItem GetByHash(Guid hash)
         {
             throw new System.NotImplementedException();
         }
