@@ -10,7 +10,6 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
     {
         public CsvDataCollectionDriver(string filePath, bool isReadonly)
         {
-            throw new System.NotImplementedException();
         }
 
         public bool isReadOnly { get; private set; }
