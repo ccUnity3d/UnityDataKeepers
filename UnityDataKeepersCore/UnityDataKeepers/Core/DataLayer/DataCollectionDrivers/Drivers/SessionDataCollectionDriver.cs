@@ -39,8 +39,10 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
             _collection.Add(item);
             return true;
         }
+
         public bool Remove(TItem item)
         {
+            if (item == null) return false;
             _hashes.Remove(item.Hash.ToString());
             return _collection.Remove(item);
         }
