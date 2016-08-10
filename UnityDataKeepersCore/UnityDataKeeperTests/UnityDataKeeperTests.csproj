@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="DataLayer\DataDriver\DataDriverInterfaceTester.cs" />
     <Compile Include="DataLayer\DataDriver\SessionDataDriverTests.cs" />
+    <Compile Include="DummyObjects\DummyDataItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UnityDataKeepers\UnityDataKeepersCore.csproj">

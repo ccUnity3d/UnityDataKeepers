@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 {
-    public class SessionDataCollectionDriver<TItem> : 
+    internal class SessionDataCollectionDriver<TItem> : 
         IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
