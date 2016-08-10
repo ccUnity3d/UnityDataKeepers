@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityDataKeepersCore.Core.DataLayer.RevisionData;
 using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
@@ -7,6 +6,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
     public interface IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
+        bool isReadOnly { get; }
         TItem GetByHash(Hash128 hash);
         bool Add(TItem item);
         bool Remove(TItem item);

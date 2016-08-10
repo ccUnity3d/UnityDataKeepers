@@ -8,7 +8,12 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
-        private readonly List<TItem> _collection = new List<TItem>(); 
+        private readonly List<TItem> _collection = new List<TItem>();
+
+        public bool isReadOnly
+        {
+            get { return false; }
+        }
 
         public TItem GetByHash(Hash128 hash)
         {

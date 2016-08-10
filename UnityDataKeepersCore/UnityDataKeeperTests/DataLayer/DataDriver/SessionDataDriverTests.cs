@@ -12,7 +12,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -25,7 +25,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -38,7 +38,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -51,7 +51,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -64,7 +64,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -77,7 +77,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -90,7 +90,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -103,7 +103,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -116,7 +116,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -129,7 +129,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -142,7 +142,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -155,7 +155,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -168,7 +168,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -181,7 +181,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -194,7 +194,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -207,7 +207,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -220,7 +220,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -233,7 +233,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -246,7 +246,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -259,7 +259,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -272,7 +272,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -290,7 +290,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -303,7 +303,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
@@ -316,12 +316,22 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
 
             var tester =
-                new DataDriverInterfaceTester
+                new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
             var driver =
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
                     ();
             tester.UpdateTest4(driver);
+        }
+
+        [TestMethod]
+        public void IsReadonlyTest()
+        {
+            var driver =
+                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
+                    ();
+            // session is useless if it can't be rewritten
+            Assert.IsFalse(driver.isReadOnly);
         }
     }
 }

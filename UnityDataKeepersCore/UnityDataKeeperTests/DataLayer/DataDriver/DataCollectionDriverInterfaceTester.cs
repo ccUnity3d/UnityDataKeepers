@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace UnityDataKeeperTests.BlsackBox
 {
-    public class DataDriverInterfaceTester<TDriver, TItem>
+    public class DataCollectionDriverInterfaceTester<TDriver, TItem>
         where TDriver : IDataCollectionDriver<TItem>
         where TItem : class, IDataItem, new()
     {
