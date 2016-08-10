@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityDataKeepersCore.Core.DataLayer.Model;
 using UnityEngine;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers

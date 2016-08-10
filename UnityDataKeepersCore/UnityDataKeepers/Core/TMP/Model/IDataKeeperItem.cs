@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace UnityDataKeepersCore.Core.Model
+namespace UnityDataKeepersCore.Core.TMP.Model
 {
     public interface IDataKeeperItem
     {

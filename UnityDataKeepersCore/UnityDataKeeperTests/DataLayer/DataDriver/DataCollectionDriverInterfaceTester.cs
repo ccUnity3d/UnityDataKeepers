@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
-using Random = UnityEngine.Random;
+using UnityDataKeepersCore.Core.DataLayer.Model;
 
-namespace UnityDataKeeperTests.BlsackBox
+namespace UnityDataKeeperTests.DataLayer.DataDriver
 {
     public class DataCollectionDriverInterfaceTester<TDriver, TItem>
         where TDriver : IDataCollectionDriver<TItem>

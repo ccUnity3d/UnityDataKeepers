@@ -1,7 +1,8 @@
 using System;
+using UnityDataKeepersCore.Core.DataLayer.Model;
 using UnityEngine;
 
-namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
+namespace UnityDataKeeperTests.DummyObjects
 {
     public class DummyDataItem : IDataItem
     {

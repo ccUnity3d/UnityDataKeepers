@@ -1,7 +1,7 @@
-﻿using UnityDataKeepersCore.Core.Model;
+﻿using UnityDataKeepersCore.Core.TMP.Model;
 using UnityEngine.Events;
 
-namespace UnityDataKeepersCore.Core.Events
+namespace UnityDataKeepersCore.Helpers.Events
 {
     public class AddKeeperItemEvent : UnityEvent<IDataKeeperItem>
     {

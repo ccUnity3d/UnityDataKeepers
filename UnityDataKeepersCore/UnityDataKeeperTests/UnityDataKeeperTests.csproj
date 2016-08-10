@@ -53,8 +53,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DataLayer\DataDriver\CsvDataCollectionDriverTest.cs" />
     <Compile Include="DataLayer\DataDriver\DataCollectionDriverInterfaceTester.cs" />
     <Compile Include="DataLayer\DataDriver\SessionDataDriverTests.cs" />
+    <Compile Include="DummyObjects\CsvTestsDummyCollectionItem.cs" />
     <Compile Include="DummyObjects\DummyDataItem.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityDataKeepersCore.Core.Events;
+using UnityDataKeepersCore.Helpers.Events;
 
-namespace UnityDataKeepersCore.Core.Model
+namespace UnityDataKeepersCore.Core.TMP.Model
 {
     public enum KeeperSavePoliticType
     {

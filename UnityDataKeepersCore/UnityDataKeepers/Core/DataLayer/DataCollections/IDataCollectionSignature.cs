@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityDataKeepersCore.Core.DataLayer.RevisionData;
 using UnityEngine;
 
-namespace UnityDataKeepersCore.Core.DataLayer.RevisionData
+namespace UnityDataKeepersCore.Core.DataLayer.DataCollections
 {
     public interface IDataCollectionSignature : IComparable
     {

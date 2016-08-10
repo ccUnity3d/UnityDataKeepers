@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
+namespace UnityDataKeepersCore.Core.DataLayer.Model
 {
     public interface IDataItem : IComparable
     {

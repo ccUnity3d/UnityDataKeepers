@@ -1,4 +1,4 @@
-﻿namespace UnityDataKeepersCore.Core
+﻿namespace UnityDataKeepersCore.Core.TMP
 {
     class DataKeepersSettings
     {

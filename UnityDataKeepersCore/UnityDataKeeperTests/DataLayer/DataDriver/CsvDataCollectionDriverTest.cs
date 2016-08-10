@@ -5,12 +5,16 @@ using UnityDataKeeperTests.DummyObjects;
 namespace UnityDataKeeperTests.DataLayer.DataDriver
 {
     [TestClass]
-    public class SessionDataDriverTests
+    class CsvDataCollectionDriverTest
     {
+        private string CreateGoodCsvFile()
+        {
+            
+        }
+
         [TestMethod]
         public void IsInInitialState()
         {
-
             var tester =
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
@@ -322,16 +326,6 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
                     ();
             tester.UpdateTest4(driver);
-        }
-
-        [TestMethod]
-        public void IsReadonlyTest()
-        {
-            var driver =
-                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
-                    ();
-            // session is useless if it can't be rewritten
-            Assert.IsFalse(driver.isReadOnly);
         }
     }
 }

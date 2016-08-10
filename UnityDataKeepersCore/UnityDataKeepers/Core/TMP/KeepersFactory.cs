@@ -1,4 +1,4 @@
-﻿namespace UnityDataKeepersCore.Core.Model.Factories
+﻿namespace UnityDataKeepersCore.Core.TMP
 {
     public static class KeepersFactory
     {

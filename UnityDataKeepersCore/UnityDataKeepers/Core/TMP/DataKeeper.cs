@@ -1,20 +1,23 @@
-﻿namespace UnityDataKeepersCore.Core.Model
+﻿using UnityDataKeepersCore.Core.TMP.Model;
+using UnityDataKeepersCore.Helpers.Events;
+
+namespace UnityDataKeepersCore.Core.TMP
 {
     public abstract class DataKeeper<TItem> : DataProvider<TItem>, IDataKeeper<TItem> where TItem:IDataKeeperItem
     {
         private DataKeeper() { }
 
-        public Events.AddKeeperItemEvent OnItemAdd
+        public AddKeeperItemEvent OnItemAdd
         {
             get { throw new System.NotImplementedException(); }
         }
 
-        public Events.DeleteKeeperItemEvent OnItemDelete
+        public DeleteKeeperItemEvent OnItemDelete
         {
             get { throw new System.NotImplementedException(); }
         }
 
-        public Events.UpdateKeeperItemEvent OnItemUpdate
+        public UpdateKeeperItemEvent OnItemUpdate
         {
             get { throw new System.NotImplementedException(); }
         }
