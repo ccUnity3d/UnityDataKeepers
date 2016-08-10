@@ -333,5 +333,29 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             // session is useless if it can't be rewritten
             Assert.IsFalse(driver.isReadOnly);
         }
+
+        [TestMethod]
+        public void UniqueHashes10K()
+        {
+            var tester =
+               new DataCollectionDriverInterfaceTester
+                   <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
+            var driver =
+                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
+                    ();
+            tester.UniqueHashes(driver,10000);
+        }
+
+        [TestMethod]
+        public void UniqueHashes100K()
+        {
+            var tester =
+               new DataCollectionDriverInterfaceTester
+                   <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
+            var driver =
+                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
+                    ();
+            tester.UniqueHashes(driver,100000);
+        }
     }
 }

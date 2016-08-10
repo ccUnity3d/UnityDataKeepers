@@ -279,5 +279,13 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.IsFalse(driver.Update(item),"item isn't at collection - need return false");
             Assert.AreNotEqual(item, driver.GetByHash(item.Hash), "'update' added item to collection, don't need to do this");
         }
+
+        public void UniqueHashes(TDriver driver, int addCount)
+        {
+            var list = Enumerable.Repeat(new TItem(), addCount);
+            driver.Add(list);
+            Assert.AreEqual(driver.Count(),
+                driver.GetAll().Distinct().Count());
+        }
     }
 }

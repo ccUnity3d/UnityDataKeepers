@@ -541,7 +541,6 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         [TestMethod]
         public void UpdateTest3()
         {
-
             var tester =
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
@@ -564,7 +563,6 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         [TestMethod]
         public void UpdateTest4()
         {
-
             var tester =
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
@@ -577,6 +575,50 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
                 tester.UpdateTest4(driver);
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void UniqueHashes10K()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateGoodCsvFile();
+            try
+            {
+                var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, false);
+                tester.UniqueHashes(driver, 10000);
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void UniqueHashes100K()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateGoodCsvFile();
+            try
+            {
+                var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, false);
+                tester.UniqueHashes(driver, 100000);
             }
             finally
             {
