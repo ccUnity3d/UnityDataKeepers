@@ -12,7 +12,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         where TItem : class, IDataItem, new()
     {
 
-        public void IsInInitialState(TDriver driver)
+        public void IsEmptyAndInInitialState(TDriver driver)
         {
             Assert.IsNotNull(driver, "driver can't be null at initial state");
             Assert.AreEqual(0,
@@ -25,7 +25,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "driver need to return empty collection");
         }
 
-        public void AddTest1(TDriver driver)
+        public void AddTest_Good(TDriver driver)
         {
             var count = driver.Count();
             Assert.IsTrue(driver.Add(new TItem()),
@@ -35,7 +35,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "count need increment when adding");
         }
 
-        public void AddTest2(TDriver driver)
+        public void AddTest_AddNull(TDriver driver)
         {
             var count = driver.Count();
             Assert.IsFalse(driver.Add((TItem)null),
@@ -45,7 +45,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "count need have initial state when adding 'null' item");
         }
 
-        public void AddTest3(TDriver driver)
+        public void AddTest_AddItemTwice(TDriver driver)
         {
             var count = driver.Count();
             var item = new TItem();
@@ -58,7 +58,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "count need increment for 1 when adding few same items");
         }
 
-        public void AddMultipleTest1(TDriver driver)
+        public void AddMultipleTest_Good(TDriver driver)
         {
             var count = driver.Count();
             var addCount = 500;
@@ -71,7 +71,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "driver items count need be increased to elements count whet collection added");
         }
 
-        public void AddMultipleTest2(TDriver driver)
+        public void AddMultipleTest_AddNullItems(TDriver driver)
         {
             var count = driver.Count();
             var addCount = 500;
@@ -89,7 +89,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "need to return count of added items (null items don't need to calculated)");
         }
 
-        public void AddMultipleTest3(TDriver driver)
+        public void AddMultipleTest_AddNullCollection(TDriver driver)
         {
             var count = driver.Count();
             Assert.AreEqual(0,
@@ -100,7 +100,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "count don't need to change when added 'null' collection");
         }
 
-        public void AddMultipleTest4(TDriver driver)
+        public void AddMultipleTest_DoubleAddItems(TDriver driver)
         {
             var count = driver.Count();
             var addCount = 500;
@@ -121,7 +121,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "don't need to add same elements");
         }
 
-        public void GetByHashTest1(TDriver driver)
+        public void GetByHashTest_Good(TDriver driver)
         {
             var item = new TItem();
             driver.Add(item);
@@ -130,7 +130,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "need to return previous added item");
         }
 
-        public void GetByHashTest2(TDriver driver)
+        public void GetByHashTest_PushNull(TDriver driver)
         {
             var item = new TItem();
             Assert.AreEqual(null,
@@ -138,7 +138,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "need to return null if item not in collection");
         }
 
-        public void RemoveTest1(TDriver driver)
+        public void RemoveTest_Good(TDriver driver)
         {
             var item = new TItem();
             driver.Add(item);
@@ -150,7 +150,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "need decrease items count when removing");
         }
 
-        public void RemoveTest2(TDriver driver)
+        public void RemoveTest_DoubleRemove(TDriver driver)
         {
             var item = new TItem();
             driver.Add(item);
@@ -164,13 +164,13 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 "need decrease items count when removing");
         }
 
-        public void RemoveTest3(TDriver driver)
+        public void RemoveTest_PushNull(TDriver driver)
         {
             Assert.IsFalse(driver.Remove((TItem)null),
                 "need to return false when argument is null");
         }
 
-        public void RemoveMultipleTest1(TDriver driver)
+        public void RemoveMultipleTest_Good(TDriver driver)
         {
             var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
@@ -180,7 +180,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(count - itemsCount, driver.Count());
         }
 
-        public void RemoveMultipleTest2(TDriver driver)
+        public void RemoveMultipleTest_PushNullItems(TDriver driver)
         {
             var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).Select((i, n) => n % 2 == 0 ? null : i).ToList();
@@ -192,7 +192,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(count - goodCount, driver.Count());
         }
 
-        public void RemoveMultipleTest3(TDriver driver)
+        public void RemoveMultipleTest_DoubleRemove(TDriver driver)
         {
             var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
@@ -205,7 +205,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(count - itemsCount, driver.Count());
         }
 
-        public void RemoveMultipleTest4(TDriver driver)
+        public void RemoveMultipleTest_PushNullCollection(TDriver driver)
         {
             var count = driver.Count();
             Assert.AreEqual(0, driver.Remove((IEnumerable<TItem>)null),
@@ -225,7 +225,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
         public void GetAllTest(TDriver driver)
         {
-            IsInInitialState(driver);
+            IsEmptyAndInInitialState(driver);
             var itemsCount = 500;
             var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
             driver.Add(items);
@@ -248,7 +248,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(0, driver.Count());
         }
 
-        public void UpdateTest1(TDriver driver, Func<TItem, TItem> updateFunction)
+        public void UpdateTest_SimpleUpdate(TDriver driver, Func<TItem, TItem> updateFunction)
         {
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
@@ -257,7 +257,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(item,driver.GetByHash(item.Hash), "item isn't updated");
         }
 
-        public void UpdateTest2(TDriver driver)
+        public void UpdateTest_PushNull(TDriver driver)
         {
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
@@ -265,7 +265,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(item, driver.GetByHash(item.Hash), "item was updated");
         }
 
-        public void UpdateTest3(TDriver driver)
+        public void UpdateTest_UpdateNotMidifiedItem(TDriver driver)
         {
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
@@ -273,7 +273,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(item, driver.GetByHash(item.Hash));
         }
 
-        public void UpdateTest4(TDriver driver)
+        public void UpdateTest_UpdateItemNotInCollection(TDriver driver)
         {
             var item = new TItem();
             Assert.IsFalse(driver.Update(item),"item isn't at collection - need return false");

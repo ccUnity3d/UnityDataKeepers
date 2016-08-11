@@ -42,7 +42,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.IsInInitialState(driver);
+                tester.IsEmptyAndInInitialState(driver);
             }
             finally
             {
@@ -51,7 +51,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddTest1()
+        public void AddTest_Good()
         {
 
             var tester =
@@ -65,7 +65,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddTest1(driver);
+                tester.AddTest_Good(driver);
             }
             finally
             {
@@ -74,7 +74,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddTest2()
+        public void AddTest_AddNull()
         {
 
             var tester =
@@ -88,7 +88,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddTest2(driver);
+                tester.AddTest_AddNull(driver);
             }
             finally
             {
@@ -97,7 +97,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddTest3()
+        public void AddTest_AddItemTwice()
         {
 
             var tester =
@@ -111,7 +111,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddTest3(driver);
+                tester.AddTest_AddItemTwice(driver);
             }
             finally
             {
@@ -120,7 +120,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddMultipleTest1()
+        public void AddMultipleTest_Good()
         {
 
             var tester =
@@ -134,7 +134,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddMultipleTest1(driver);
+                tester.AddMultipleTest_Good(driver);
             }
             finally
             {
@@ -143,7 +143,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddMultipleTest2()
+        public void AddMultipleTest_AddNullItems()
         {
 
             var tester =
@@ -157,7 +157,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddMultipleTest2(driver);
+                tester.AddMultipleTest_AddNullItems(driver);
             }
             finally
             {
@@ -166,7 +166,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddMultipleTest3()
+        public void AddMultipleTest_AddNullCollection()
         {
 
             var tester =
@@ -180,7 +180,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddMultipleTest3(driver);
+                tester.AddMultipleTest_AddNullCollection(driver);
             }
             finally
             {
@@ -189,7 +189,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void AddMultipleTest4()
+        public void AddMultipleTest_DoubleAddItems()
         {
 
             var tester =
@@ -203,7 +203,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.AddMultipleTest4(driver);
+                tester.AddMultipleTest_DoubleAddItems(driver);
             }
             finally
             {
@@ -212,7 +212,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void GetByHashTest1()
+        public void GetByHashTest_Good()
         {
 
             var tester =
@@ -226,7 +226,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.GetByHashTest1(driver);
+                tester.GetByHashTest_Good(driver);
             }
             finally
             {
@@ -235,7 +235,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void GetByHashTest2()
+        public void GetByHashTest_PushNull()
         {
 
             var tester =
@@ -249,7 +249,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.GetByHashTest2(driver);
+                tester.GetByHashTest_PushNull(driver);
             }
             finally
             {
@@ -258,7 +258,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveTest1()
+        public void RemoveTest_Good()
         {
 
             var tester =
@@ -272,7 +272,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveTest1(driver);
+                tester.RemoveTest_Good(driver);
             }
             finally
             {
@@ -281,7 +281,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveTest2()
+        public void RemoveTest_DoubleRemove()
         {
 
             var tester =
@@ -295,7 +295,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveTest2(driver);
+                tester.RemoveTest_DoubleRemove(driver);
             }
             finally
             {
@@ -304,7 +304,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveTest3()
+        public void RemoveTest_PushNull()
         {
 
             var tester =
@@ -318,7 +318,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveTest3(driver);
+                tester.RemoveTest_PushNull(driver);
             }
             finally
             {
@@ -327,7 +327,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveMultipleTest1()
+        public void RemoveMultipleTest_Good()
         {
 
             var tester =
@@ -341,7 +341,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveMultipleTest1(driver);
+                tester.RemoveMultipleTest_Good(driver);
             }
             finally
             {
@@ -350,7 +350,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveMultipleTest2()
+        public void RemoveMultipleTest_PushNullItems()
         {
 
             var tester =
@@ -364,7 +364,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveMultipleTest2(driver);
+                tester.RemoveMultipleTest_PushNullItems(driver);
             }
             finally
             {
@@ -373,7 +373,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveMultipleTest3()
+        public void RemoveMultipleTest_DoubleRemove()
         {
 
             var tester =
@@ -387,7 +387,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveMultipleTest3(driver);
+                tester.RemoveMultipleTest_DoubleRemove(driver);
             }
             finally
             {
@@ -396,7 +396,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void RemoveMultipleTest4()
+        public void RemoveMultipleTest_PushNullCollection()
         {
 
             var tester =
@@ -410,7 +410,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.RemoveMultipleTest4(driver);
+                tester.RemoveMultipleTest_PushNullCollection(driver);
             }
             finally
             {
@@ -488,7 +488,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void UpdateTest1()
+        public void UpdateTest_SimpleUpdate()
         {
 
             var tester =
@@ -502,7 +502,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.UpdateTest1(driver,
+                tester.UpdateTest_SimpleUpdate(driver,
                     item =>
                     {
                         item.StringProperty += "test";
@@ -516,7 +516,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void UpdateTest2()
+        public void UpdateTest_PushNull()
         {
 
             var tester =
@@ -530,7 +530,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.UpdateTest2(driver);
+                tester.UpdateTest_PushNull(driver);
             }
             finally
             {
@@ -539,7 +539,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void UpdateTest3()
+        public void UpdateTest_UpdateNotMidifiedItem()
         {
             var tester =
                 new DataCollectionDriverInterfaceTester
@@ -552,7 +552,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.UpdateTest3(driver);
+                tester.UpdateTest_UpdateNotMidifiedItem(driver);
             }
             finally
             {
@@ -561,7 +561,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void UpdateTest4()
+        public void UpdateTest_UpdateItemNotInCollection()
         {
             var tester =
                 new DataCollectionDriverInterfaceTester
@@ -574,7 +574,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false);
-                tester.UpdateTest4(driver);
+                tester.UpdateTest_UpdateItemNotInCollection(driver);
             }
             finally
             {
