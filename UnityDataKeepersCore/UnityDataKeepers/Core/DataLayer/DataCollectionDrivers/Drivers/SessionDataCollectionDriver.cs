@@ -12,7 +12,12 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         private static readonly System.Random Rnd = new System.Random();
 
         private readonly List<TItem> _collection = new List<TItem>();
-        
+
+        public bool isReadOnly
+        {
+            get { return false; }
+        }
+
         public TItem GetByHash(Guid hash)
         {
             return _collection.FirstOrDefault(i => i.Hash.Equals(hash));
