@@ -1,72 +1,62 @@
 ﻿using System;
-using System.Collections.Generic;
+using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvFiles;
 using UnityDataKeepersCore.Core.DataLayer.Model;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 {
-    internal class CsvDataCollectionDriver<TItem> :
+    internal class CsvDataCollectionDriver<TItem> : 
+        SessionDataCollectionDriver<TItem>,
         IStoredCollectionDriver<TItem>
-        where TItem : class, IDataItem
+        where TItem : class, IDataItem, new()
     {
-        public CsvDataCollectionDriver(string filePath, bool isReadonly)
+        private StoredCollectionDataSource? _dataSource = null;
+
+        public override bool IsReadOnly
         {
+            get
+            {
+                return _dataSource.HasValue
+                    ? _dataSource.Value.IsReadonly
+                    : base.IsReadOnly;
+            }
         }
 
-        public bool IsReadOnly { get; private set; }
-
-        public TItem GetByHash(Guid hash)
+        public void SetDataSource(StoredCollectionDataSource source)
         {
-            throw new System.NotImplementedException();
+            _dataSource = source;
         }
 
-        public bool Add(TItem item)
+        public bool Load()
         {
-            throw new System.NotImplementedException();
-        }
+            if (!_dataSource.HasValue)
+                return false;
 
-        public bool Remove(TItem item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int Add(IEnumerable<TItem> items)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int Remove(IEnumerable<TItem> items)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool Update(TItem item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<TItem> GetAll()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Clear()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int Count()
-        {
-            throw new System.NotImplementedException();
+            return Add(CsvFile.Read<TItem>(_dataSource.Value.FilePath)) > 0;
         }
 
         public bool Save()
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var csvFile = new CsvFile<TItem>("clients.csv"))
+                {
+                    foreach (var item in GetAll())
+                    {
+                        csvFile.Append(item);
+                    }
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            throw new NotImplementedException();
+            _dataSource = null;
+            base.Dispose();
         }
     }
 }

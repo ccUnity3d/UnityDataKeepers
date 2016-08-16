@@ -40,8 +40,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvDataCollectionDriver.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvDefinition.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvDestination.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvFile.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvFileLinqExtensions.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvFileReader.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvIgnorePropertyAttribute.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvSource.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\SessionDataCollectionDriver.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\IStoredCollection.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\StoredCollectionDataSource.cs" />
     <Compile Include="Core\DataLayer\DataCollections\IDataCollection.cs" />
     <Compile Include="Core\DataLayer\Model\IDataItem.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\IDataCollectionDriver.cs" />

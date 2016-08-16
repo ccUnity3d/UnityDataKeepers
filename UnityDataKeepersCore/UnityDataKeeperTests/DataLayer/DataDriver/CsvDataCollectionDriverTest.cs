@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using UnityDataKeeperTests.DummyObjects;
@@ -41,7 +42,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (fileName, false, false))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -491,7 +492,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (fileName, false, false))
                 {
                     tester.GetAllTest(driver);
                 }
@@ -728,5 +729,36 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
         #endregion
 
+#region CSVTests
+
+        [TestMethod]
+        public void SimpleReadTest()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateGoodCsvFile();
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, false))
+                {
+                    var neededStrings =
+                        driver.GetAll()
+                            .Where(i => i.StringProperty.Equals("simle text")).ToList();
+                    Assert.IsNotNull(neededStrings);
+                    Assert.AreEqual(2,neededStrings.Count);
+                    Assert.AreEqual(1.2f,neededStrings[0].FloatProperty);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+#endregion
     }
 }

@@ -5,59 +5,59 @@ using UnityDataKeepersCore.Core.DataLayer.Model;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 {
-    internal class SessionDataCollectionDriver<TItem> : 
+    internal class SessionDataCollectionDriver<TItem> :
         IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
         private List<TItem> _collection = new List<TItem>();
 
-        public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get { return false; }
         }
 
-        public TItem GetByHash(Guid hash)
+        public virtual TItem GetByHash(Guid hash)
         {
             return _collection.FirstOrDefault(i => i.Hash.Equals(hash));
         }
 
-        public bool Add(TItem item)
+        public virtual bool Add(TItem item)
         {
             if (item == null)
                 return false;
             item.Hash = Guid.NewGuid();
-            if (_collection.Any(i=>i.Hash.Equals(item.Hash)))
+            if (_collection.Any(i => i.Hash.Equals(item.Hash)))
                 return false;
             _collection.Add(item);
             return true;
         }
 
-        public bool Remove(TItem item)
+        public virtual bool Remove(TItem item)
         {
             if (item == null) return false;
             return _collection.Remove(item);
         }
 
-        public int Add(IEnumerable<TItem> items)
+        public virtual int Add(IEnumerable<TItem> items)
         {
             if (items == null)
                 return 0;
 
-//            var toAdd =
-//                items.Where(i => i != null)
-//                    .Where(i => !_collection.Any(c => c.Equals(i)))
-//                    .Select(i =>
-//                    {
-//                        i.Hash = Guid.NewGuid();
-//                        return i;
-//                    }).ToList();
-//            _collection.AddRange(toAdd);
-//            return toAdd.Count();
+            //            var toAdd =
+            //                items.Where(i => i != null)
+            //                    .Where(i => !_collection.Any(c => c.Equals(i)))
+            //                    .Select(i =>
+            //                    {
+            //                        i.Hash = Guid.NewGuid();
+            //                        return i;
+            //                    }).ToList();
+            //            _collection.AddRange(toAdd);
+            //            return toAdd.Count();
 
-            return items.Select(Add).Count(i=>i);
+            return items.Select(Add).Count(i => i);
         }
 
-        public int Remove(IEnumerable<TItem> items)
+        public virtual int Remove(IEnumerable<TItem> items)
         {
             if (items == null) return 0;
             var toRemove = items.Where(i => i != null && _collection.Contains(i)).ToList();
@@ -68,7 +68,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
                             item => item.Hash.Equals(i.Hash)));
         }
 
-        public bool Update(TItem item)
+        public virtual bool Update(TItem item)
         {
             var index = _collection.BinarySearch(item);
             if (index < 0) return false;
@@ -76,22 +76,22 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
             return true;
         }
 
-        public IEnumerable<TItem> GetAll()
+        public virtual IEnumerable<TItem> GetAll()
         {
             return _collection;
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             _collection.Clear();
         }
 
-        public int Count()
+        public virtual int Count()
         {
             return _collection.Count;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _collection = null;
         }
