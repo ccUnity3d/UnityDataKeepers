@@ -4,7 +4,7 @@ using UnityDataKeepersCore.Core.DataLayer.Model;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
 {
-    public interface IDataCollectionDriver<TItem>
+    public interface IDataCollectionDriver<TItem> : IDisposable
         where TItem : class, IDataItem
     {
         bool IsReadOnly { get; }

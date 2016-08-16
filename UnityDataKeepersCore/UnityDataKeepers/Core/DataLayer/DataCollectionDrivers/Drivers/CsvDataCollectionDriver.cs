@@ -63,5 +63,10 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         {
             throw new NotImplementedException();
         }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

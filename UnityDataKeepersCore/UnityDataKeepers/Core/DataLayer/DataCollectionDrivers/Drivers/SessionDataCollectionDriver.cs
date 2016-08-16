@@ -9,9 +9,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
-        private static readonly System.Random Rnd = new System.Random();
-
-        private readonly List<TItem> _collection = new List<TItem>();
+        private List<TItem> _collection = new List<TItem>();
 
         public bool IsReadOnly
         {
@@ -91,6 +89,11 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         public int Count()
         {
             return _collection.Count;
+        }
+
+        public void Dispose()
+        {
+            _collection = null;
         }
     }
 }
