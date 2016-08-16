@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using UnityDataKeepersCore.Core.DataLayer.Model;
+using UnityDataKeeperTests.DummyObjects;
 
 namespace UnityDataKeeperTests.DataLayer.DataDriver
 {
@@ -49,20 +50,17 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
             var count = driver.Count();
             var item = new TItem();
-            Assert.IsTrue(driver.Add(item),
-                "driver need to return true at adding");
-            Assert.IsFalse(driver.Add(item),
-                "driver need to return false when same element adding");
-            Assert.AreEqual(count + 1,
-                driver.Count(),
-                "count need increment for 1 when adding few same items");
+            var item2 = new TItem();
+            Assert.IsTrue(driver.Add(item));
+            Assert.IsTrue(driver.Add(item2));
+            Assert.AreEqual(count + 2, driver.Count());
         }
 
         public void AddMultipleTest_Good(TDriver driver)
         {
             var count = driver.Count();
             var addCount = 500;
-            var list = Enumerable.Repeat(new TItem(), addCount);
+            var list = Enumerable.Repeat(0, addCount).Select(i => new TItem());
             Assert.AreEqual(addCount,
                 driver.Add(list),
                 "driver need to return new elements count whem adding");
@@ -76,8 +74,9 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var count = driver.Count();
             var addCount = 500;
             var list =
-                Enumerable.Repeat(new TItem(), addCount)
-                    .Select((item, n) => n % 2 == 0
+                Enumerable.Repeat(0, addCount)
+                    .Select(i => new TItem())
+                    .Select((item, n) => n%2 == 0
                         ? null
                         : item).ToList();
             var goodCount = list.Count(i => i != null);
@@ -105,17 +104,14 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var count = driver.Count();
             var addCount = 500;
             var list =
-                Enumerable.Repeat(new TItem(), addCount)
-                    .Select((item, n) => n % 2 == 0
+                Enumerable.Repeat(0, addCount)
+                    .Select(i => new TItem())
+                    .Select((item, n) => n%2 == 0
                         ? null
                         : item).ToList();
             var goodCount = list.Count(i => i != null);
-            Assert.AreEqual(goodCount,
-                driver.Add(list),
-                "need to return count of added items (null items don't need to calculated)");
-            Assert.AreEqual(0,
-                driver.Add(list),
-                "don't need to add same elements");
+            Assert.AreEqual(goodCount, driver.Add(list));
+            Assert.AreEqual(0, driver.Add(list));
             Assert.AreEqual(count + goodCount,
                 driver.Count(),
                 "don't need to add same elements");
@@ -173,7 +169,10 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         public void RemoveMultipleTest_Good(TDriver driver)
         {
             var itemsCount = 500;
-            var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
+            var items =
+                Enumerable.Repeat(0, itemsCount)
+                    .Select(i => new TItem())
+                    .ToList();
             driver.Add(items);
             var count = driver.Count();
             Assert.AreEqual(itemsCount, driver.Remove(items));
@@ -183,7 +182,12 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         public void RemoveMultipleTest_PushNullItems(TDriver driver)
         {
             var itemsCount = 500;
-            var items = Enumerable.Repeat(new TItem(), itemsCount).Select((i, n) => n % 2 == 0 ? null : i).ToList();
+            var items =
+                Enumerable.Repeat(0, itemsCount)
+                    .Select(i => new TItem())
+                    .Select((i, n) => n%2 == 0
+                        ? null
+                        : i).ToList();
             var goodCount = items.Count(i => i != null);
             driver.Add(items);
             var count = driver.Count();
@@ -195,7 +199,10 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         public void RemoveMultipleTest_DoubleRemove(TDriver driver)
         {
             var itemsCount = 500;
-            var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
+            var items =
+                Enumerable.Repeat(0, itemsCount)
+                    .Select(i => new TItem())
+                    .ToList();
             driver.Add(items);
             var count = driver.Count();
             Assert.AreEqual(itemsCount, driver.Remove(items),
@@ -227,7 +234,10 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
             IsEmptyAndInInitialState(driver);
             var itemsCount = 500;
-            var items = Enumerable.Repeat(new TItem(), itemsCount).ToList();
+            var items =
+                Enumerable.Repeat(0, itemsCount)
+                    .Select(i => new TItem())
+                    .ToList();
             driver.Add(items);
             var all = driver.GetAll().ToArray();
             Assert.AreEqual(items.Count,all.Count());
@@ -289,13 +299,34 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(driver.Count(),
                 driver.GetAll().Distinct().Count());
         }
-        
+
         public void UniqueHashesListAdd(TDriver driver, int addCount)
         {
+            var list =
+                Enumerable.Repeat(0, addCount)
+                    .Select(
+                        i => new TItem())
+                    .ToArray();
+            Assert.AreEqual(list.Length, driver.Add(list));
+            var uniqueCount = driver.GetAll().Select(i=>i.Hash).Distinct().Count();
+            Assert.AreEqual(driver.Count(),uniqueCount);
+        }
+
+        public void Add_Samereferences(TDriver driver, int addCount)
+        {
             var list = Enumerable.Repeat(new TItem(), addCount).ToArray();
-            driver.Add(list);
-            Assert.AreEqual(driver.Count(),
-                driver.GetAll().Distinct().Count());
+            Assert.IsTrue(driver.Add(list[0]));
+            for (var i = 1; i < list.Length; i++)
+            {
+                var item = list[i];
+                Assert.IsFalse(driver.Add(item));
+            }
+        }
+
+        public void AddMultiple_SameReferences(TDriver driver, int addCount)
+        {
+            var list = Enumerable.Repeat(new TItem(), addCount).ToArray();
+            Assert.AreEqual(1, driver.Add(list));
         }
     }
 }

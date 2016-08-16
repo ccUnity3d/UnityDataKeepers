@@ -12,7 +12,6 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         private static readonly System.Random Rnd = new System.Random();
 
         private readonly List<TItem> _collection = new List<TItem>();
-        private readonly HashSet<string> _hashes = new HashSet<string>(); 
 
         public bool isReadOnly
         {
@@ -26,16 +25,11 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 
         public bool Add(TItem item)
         {
-            if (item == null) 
+            if (item == null)
                 return false;
-            if (_collection.Contains(item))
+            item.Hash = Guid.NewGuid();
+            if (_collection.Any(i=>i.Hash.Equals(item.Hash)))
                 return false;
-            while (_hashes.Contains(item.Hash.ToString()))
-            {
-                item.Hash = Guid.NewGuid();
-            }
-            _hashes.Add(item.Hash.ToString());
-
             _collection.Add(item);
             return true;
         }
@@ -43,36 +37,32 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         public bool Remove(TItem item)
         {
             if (item == null) return false;
-            _hashes.Remove(item.Hash.ToString());
             return _collection.Remove(item);
         }
 
         public int Add(IEnumerable<TItem> items)
         {
-            if (items == null) return 0;
-            var toAdd = items.Where(i => i != null && _hashes.Contains(i.Hash.ToString())).ToList();
-            
-            foreach (var t in toAdd)
-            {
-                while (_hashes.Contains(t.Hash.ToString()))
-                {
-                    t.Hash = Guid.NewGuid();
-                }
-                _hashes.Add(t.Hash.ToString());
-            }
+            if (items == null)
+                return 0;
 
-            _collection.AddRange(toAdd);
-            return toAdd.Count();
+//            var toAdd =
+//                items.Where(i => i != null)
+//                    .Where(i => !_collection.Any(c => c.Equals(i)))
+//                    .Select(i =>
+//                    {
+//                        i.Hash = Guid.NewGuid();
+//                        return i;
+//                    }).ToList();
+//            _collection.AddRange(toAdd);
+//            return toAdd.Count();
+
+            return items.Select(Add).Count(i=>i);
         }
 
         public int Remove(IEnumerable<TItem> items)
         {
             if (items == null) return 0;
-            var toRemove = items.Where(i => i != null && _hashes.Contains(i.Hash.ToString())).ToList();
-            foreach (var item in toRemove)
-            {
-                _hashes.Remove(item.Hash.ToString());
-            }
+            var toRemove = items.Where(i => i != null && _collection.Contains(i)).ToList();
             return
                 _collection.RemoveAll(
                     i =>

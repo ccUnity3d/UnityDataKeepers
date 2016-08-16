@@ -357,5 +357,29 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     ();
             tester.UniqueHashesListAdd(driver,1000);
         }
+        
+        [TestMethod]
+        public void Add_Samereferences()
+        {
+            var tester =
+               new DataCollectionDriverInterfaceTester
+                   <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
+            var driver =
+                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
+                    ();
+            tester.Add_Samereferences(driver, 1000);
+        }
+        
+        [TestMethod]
+        public void AddMultiple_SameReferences()
+        {
+            var tester =
+               new DataCollectionDriverInterfaceTester
+                   <IDataCollectionDriver<DummyDataItem>, DummyDataItem>();
+            var driver =
+                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
+                    ();
+            tester.AddMultiple_SameReferences(driver, 1000);
+        }
     }
 }
