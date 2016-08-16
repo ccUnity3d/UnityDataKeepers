@@ -5,14 +5,15 @@ using UnityDataKeepersCore.Core.DataLayer.Model;
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 {
     internal class CsvDataCollectionDriver<TItem> :
-        IDataCollectionDriver<TItem>
+        IStoredCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
         public CsvDataCollectionDriver(string filePath, bool isReadonly)
         {
         }
 
-        public bool isReadOnly { get; private set; }
+        public bool IsReadOnly { get; private set; }
+
         public TItem GetByHash(Guid hash)
         {
             throw new System.NotImplementedException();
@@ -56,6 +57,11 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         public int Count()
         {
             throw new System.NotImplementedException();
+        }
+
+        public bool Save()
+        {
+            throw new NotImplementedException();
         }
     }
 }

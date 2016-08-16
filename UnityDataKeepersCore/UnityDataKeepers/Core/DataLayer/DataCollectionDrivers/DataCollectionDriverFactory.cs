@@ -11,7 +11,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
             return new SessionDataCollectionDriver<T>();
         }
 
-        public static IDataCollectionDriver<T> CreateCsvDataDriver<T>(string filePath, bool isReadonly)
+        public static IStoredCollectionDriver<T> CreateCsvDataDriver<T>(string filePath, bool isReadonly)
             where T : class, IDataItem
         {
             return new CsvDataCollectionDriver<T>(filePath, isReadonly);

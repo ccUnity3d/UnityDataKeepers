@@ -13,7 +13,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 
         private readonly List<TItem> _collection = new List<TItem>();
 
-        public bool isReadOnly
+        public bool IsReadOnly
         {
             get { return false; }
         }

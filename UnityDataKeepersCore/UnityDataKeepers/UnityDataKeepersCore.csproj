@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvDataCollectionDriver.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\SessionDataCollectionDriver.cs" />
+    <Compile Include="Core\DataLayer\DataCollectionDrivers\IStoredCollection.cs" />
     <Compile Include="Core\DataLayer\DataCollections\IDataCollection.cs" />
     <Compile Include="Core\DataLayer\Model\IDataItem.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\IDataCollectionDriver.cs" />
