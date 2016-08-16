@@ -7,7 +7,6 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
     public interface IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
-        bool isReadOnly { get; }
         TItem GetByHash(Guid hash);
         bool Add(TItem item);
         bool Remove(TItem item);

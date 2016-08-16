@@ -325,16 +325,6 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void IsReadonlyTest()
-        {
-            var driver =
-                DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
-                    ();
-            // session is useless if it can't be rewritten
-            Assert.IsFalse(driver.isReadOnly);
-        }
-
-        [TestMethod]
         public void UniqueHashesSimpleAdd()
         {
             var tester =
