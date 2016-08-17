@@ -13,7 +13,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         {
             public int Compare(TItem x, TItem y)
             {
-                return x.Hash.CompareTo(y.Hash);
+                return x.Guid.CompareTo(y.Guid);
             }
         }
 
@@ -24,19 +24,26 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
             get { return false; }
         }
 
-        public virtual TItem GetByHash(Guid hash)
+        public virtual TItem GetByGuid(Guid guid)
         {
-            return _collection.FirstOrDefault(i => i.Hash.Equals(hash));
+            return _collection.FirstOrDefault(i => i.Guid.Equals(guid));
         }
 
         public virtual bool Add(TItem item)
         {
+            return Add(item, true);
+        }
+
+        private bool Add(TItem item, bool needSortCollection)
+        {
             if (item == null)
                 return false;
-            item.Hash = Guid.NewGuid();
-            if (_collection.Any(i => i.Hash.Equals(item.Hash)))
+            item.Guid = Guid.NewGuid();
+            if (_collection.Any(i => i.Guid.Equals(item.Guid)))
                 return false;
             _collection.Add(item);
+            if (needSortCollection)
+                _collection.Sort((a, b) => a.Guid.CompareTo(b.Guid));
             return true;
         }
 
@@ -56,13 +63,16 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
             //                    .Where(i => !_collection.Any(c => c.Equals(i)))
             //                    .Select(i =>
             //                    {
-            //                        i.Hash = Guid.NewGuid();
+            //                        i.Guid = Guid.NewGuid();
             //                        return i;
             //                    }).ToList();
             //            _collection.AddRange(toAdd);
             //            return toAdd.Count();
 
-            return items.Select(Add).Count(i => i);
+            var added = items.Select(i=>Add(i,false)).Count(i => i);
+            if (added>0)
+                _collection.Sort((a, b) => a.Guid.CompareTo(b.Guid));
+            return added;
         }
 
         public virtual int Remove(IEnumerable<TItem> items)
@@ -73,11 +83,12 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
                 _collection.RemoveAll(
                     i =>
                         toRemove.Any(
-                            item => item.Hash.Equals(i.Hash)));
+                            item => item.Guid.Equals(i.Guid)));
         }
 
         public virtual bool Update(TItem item)
         {
+            if (item == null) return false;
             var index = _collection.BinarySearch(item, new ItemsComparer());
             if (index < 0) return false;
             _collection[index] = item;

@@ -8,7 +8,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
         where TItem : class, IDataItem
     {
         bool IsReadOnly { get; }
-        TItem GetByHash(Guid hash);
+        TItem GetByGuid(Guid guid);
         bool Add(TItem item);
         bool Remove(TItem item);
         int Add(IEnumerable<TItem> items);

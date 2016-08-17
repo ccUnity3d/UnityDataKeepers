@@ -6,7 +6,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.RevisionData
 {
     public interface IRevisionDataCollector
     {
-        Guid Hash { get; }
+        Guid Guid { get; }
         IEnumerable<IDataCollection> Collections { get; }
     }
 }

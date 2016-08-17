@@ -6,7 +6,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollections
 {
     public interface IDataCollectionSignature : IComparable
     {
-        Guid Hash { get; }
+        Guid Guid { get; }
         IEnumerable<RevisionAttribute> Attributes { get; }
     }
 }

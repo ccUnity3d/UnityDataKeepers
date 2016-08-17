@@ -4,6 +4,6 @@ namespace UnityDataKeepersCore.Core.TMP.Model
 {
     public interface IDataKeeperItem
     {
-        Guid Hash { get; }
+        Guid Guid { get; }
     }
 }

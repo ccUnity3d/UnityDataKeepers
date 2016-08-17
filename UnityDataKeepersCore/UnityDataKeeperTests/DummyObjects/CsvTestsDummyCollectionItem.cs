@@ -15,7 +15,7 @@ namespace UnityDataKeeperTests.DummyObjects
             OtherField
         }
 
-        public Guid Hash { get; set; }
+        public Guid Guid { get; set; }
         public string StringProperty;
         public int IntProperty;
         public float FloatProperty;
@@ -25,13 +25,13 @@ namespace UnityDataKeeperTests.DummyObjects
 
         public CsvTestsDummyCollectionItem()
         {
-            Hash = Guid.NewGuid();
+            Guid = Guid.NewGuid();
         }
 
         public int CompareTo(object obj)
         {
-            return string.Compare(Hash.ToString(),
-                ((CsvTestsDummyCollectionItem)obj).Hash.ToString(),
+            return string.Compare(Guid.ToString(),
+                ((CsvTestsDummyCollectionItem)obj).Guid.ToString(),
                 StringComparison.InvariantCulture);
         }
     }

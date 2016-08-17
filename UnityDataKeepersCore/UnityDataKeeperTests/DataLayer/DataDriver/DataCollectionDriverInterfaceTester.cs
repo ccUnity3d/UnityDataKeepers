@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using UnityDataKeepersCore.Core.DataLayer.Model;
-using UnityDataKeeperTests.DummyObjects;
 
 namespace UnityDataKeeperTests.DataLayer.DataDriver
 {
@@ -122,7 +121,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var item = new TItem();
             driver.Add(item);
             Assert.AreEqual(item,
-                driver.GetByHash(item.Hash),
+                driver.GetByGuid(item.Guid),
                 "need to return previous added item");
         }
 
@@ -130,7 +129,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
             var item = new TItem();
             Assert.AreEqual(null,
-                driver.GetByHash(item.Hash),
+                driver.GetByGuid(item.Guid),
                 "need to return null if item not in collection");
         }
 
@@ -243,7 +242,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             Assert.AreEqual(items.Count,all.Count());
             for (var i = 0; i < all.Count(); i++)
             {
-                Assert.AreEqual(items[i], all[i]);
+                Assert.IsTrue(all.Any(item => item.Equals(items[i])));
             }
         }
 
@@ -263,8 +262,8 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
             item = updateFunction(item);
-            Assert.IsTrue(driver.Update(item)); // we set new guid at adding, can't be updated
-            Assert.AreEqual(item,driver.GetByHash(item.Hash), "item isn't updated");
+            Assert.IsTrue(driver.Update(item));
+            Assert.AreEqual(item,driver.GetByGuid(item.Guid), "item isn't updated");
         }
 
         public void UpdateTest_PushNull(TDriver driver)
@@ -272,7 +271,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
             Assert.IsFalse(driver.Update(null), "need return 'false' when item is null");
-            Assert.AreEqual(item, driver.GetByHash(item.Hash), "item was updated");
+            Assert.AreEqual(item, driver.GetByGuid(item.Guid), "item was updated");
         }
 
         public void UpdateTest_UpdateNotMidifiedItem(TDriver driver)
@@ -280,14 +279,14 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
             Assert.IsTrue(driver.Update(item));
-            Assert.AreEqual(item, driver.GetByHash(item.Hash));
+            Assert.AreEqual(item, driver.GetByGuid(item.Guid));
         }
 
         public void UpdateTest_UpdateItemNotInCollection(TDriver driver)
         {
             var item = new TItem();
             Assert.IsFalse(driver.Update(item),"item isn't at collection - need return false");
-            Assert.AreNotEqual(item, driver.GetByHash(item.Hash), "'update' added item to collection, don't need to do this");
+            Assert.AreNotEqual(item, driver.GetByGuid(item.Guid), "'update' added item to collection, don't need to do this");
         }
 
         public void UniqueHashesSimpleAdd(TDriver driver, int addCount)
@@ -308,7 +307,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                         i => new TItem())
                     .ToArray();
             Assert.AreEqual(list.Length, driver.Add(list));
-            var uniqueCount = driver.GetAll().Select(i=>i.Hash).Distinct().Count();
+            var uniqueCount = driver.GetAll().Select(i=>i.Guid).Distinct().Count();
             Assert.AreEqual(driver.Count(),uniqueCount);
         }
 
