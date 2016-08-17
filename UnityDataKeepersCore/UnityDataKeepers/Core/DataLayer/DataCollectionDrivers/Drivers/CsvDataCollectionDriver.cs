@@ -31,7 +31,8 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
             if (!_dataSource.HasValue)
                 return false;
 
-            return Add(CsvFile.Read<TItem>(_dataSource.Value.FilePath)) > 0;
+            Add(CsvFile.Read<TItem>(_dataSource.Value.FilePath));
+            return true;
         }
 
         public bool Save()

@@ -9,6 +9,14 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         IDataCollectionDriver<TItem>
         where TItem : class, IDataItem
     {
+        private class ItemsComparer : IComparer<TItem>
+        {
+            public int Compare(TItem x, TItem y)
+            {
+                return x.Hash.CompareTo(y.Hash);
+            }
+        }
+
         private List<TItem> _collection = new List<TItem>();
 
         public virtual bool IsReadOnly
@@ -70,7 +78,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 
         public virtual bool Update(TItem item)
         {
-            var index = _collection.BinarySearch(item);
+            var index = _collection.BinarySearch(item, new ItemsComparer());
             if (index < 0) return false;
             _collection[index] = item;
             return true;

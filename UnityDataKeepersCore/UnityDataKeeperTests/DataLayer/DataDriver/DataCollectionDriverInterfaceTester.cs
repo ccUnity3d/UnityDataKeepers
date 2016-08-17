@@ -263,7 +263,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             var item = new TItem();
             Assert.IsTrue(driver.Add(item), "can't add test item to collection");
             item = updateFunction(item);
-            Assert.IsTrue(driver.Update(item));
+            Assert.IsTrue(driver.Update(item)); // we set new guid at adding, can't be updated
             Assert.AreEqual(item,driver.GetByHash(item.Hash), "item isn't updated");
         }
 

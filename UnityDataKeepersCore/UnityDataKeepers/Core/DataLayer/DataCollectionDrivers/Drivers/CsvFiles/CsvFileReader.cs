@@ -1,3 +1,10 @@
+/*
+ * Thanks Pascal Ganaye for great job! :)
+ * coperight: http://www.codeproject.com/Articles/685310/Simple-and-fast-CSV-library-in-Csharp
+ */
+
+#define NET_3_5
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
