@@ -69,7 +69,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
             //            _collection.AddRange(toAdd);
             //            return toAdd.Count();
 
-            var added = items.Select(i=>Add(i,false)).Count(i => i);
+            var added = items.Select(i=>Add(i,false)).Count();
             if (added>0)
                 _collection.Sort((a, b) => a.Guid.CompareTo(b.Guid));
             return added;

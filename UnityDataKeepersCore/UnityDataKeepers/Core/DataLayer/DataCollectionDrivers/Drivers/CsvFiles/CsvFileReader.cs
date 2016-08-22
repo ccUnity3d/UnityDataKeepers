@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 
 namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvFiles
@@ -204,14 +205,76 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvF
 
         private static Func<string, object> StringToObject(Type propertyType)
         {
-            if (propertyType == typeof(string))
-                return (s) => s ?? String.Empty;
-            else if (propertyType == typeof(Int32))
-                return (s) => String.IsNullOrEmpty(s) ? 0 : Int32.Parse(s);
-            if (propertyType == typeof(DateTime))
-                return (s) => String.IsNullOrEmpty(s) ? DateTimeZero : DateTime.Parse(s);
-            else
-                throw new NotImplementedException();
+            if (propertyType == typeof (string))
+                return (s) => s ?? string.Empty;
+
+            if (propertyType == typeof (int))
+                return (s) => string.IsNullOrEmpty(s)
+                    ? 0
+                    : int.Parse(s);
+
+            if (propertyType == typeof (DateTime))
+                return (s) => string.IsNullOrEmpty(s)
+                    ? DateTimeZero
+                    : DateTime.Parse(s);
+
+            if (propertyType == typeof (float))
+                return (s) => string.IsNullOrEmpty(s)
+                    ? 0
+                    : float.Parse(s);
+
+            if (propertyType.IsEnum)
+                return (s) => string.IsNullOrEmpty(s)
+                    ? 0
+                    : Enum.Parse(propertyType, s);
+
+            if (propertyType == typeof(TimeSpan))
+                return (s) => string.IsNullOrEmpty(s)
+                    ? TimeSpan.Zero
+                    : ParsTimespan(s);
+
+            throw new NotImplementedException();
+        }
+
+        private static TimeSpan ParsTimespan(string s)
+        {
+            var t = TimeSpan.Zero;
+//            if (TimeSpan.TryParse(s, out t))
+//                return t;
+            var lastStart = 0;
+            var pos = 0;
+            for (; pos < s.Length; pos++)
+            {
+                switch (s[pos])
+                {
+                    case ' ':
+                        lastStart = pos+1;
+                        break;
+                        
+                    case 's':
+                        t = t.Add(TimeSpan.FromSeconds(int.Parse(s.Substring(lastStart, pos - lastStart))));
+                        lastStart = pos+1;
+                        break;
+
+                    case 'm':
+                        t = t.Add(TimeSpan.FromMinutes(int.Parse(s.Substring(lastStart, pos - lastStart))));
+                        lastStart = pos + 1;
+                        break;
+
+                    case 'h':
+                        t = t.Add(TimeSpan.FromHours(int.Parse(s.Substring(lastStart, pos - lastStart))));
+                        lastStart = pos + 1;
+                        break;
+
+                    case 'd':
+                        t = t.Add(TimeSpan.FromDays(int.Parse(s.Substring(lastStart, pos - lastStart))));
+                        lastStart = pos + 1;
+                        break;
+                }
+            }
+            if (pos > lastStart)
+                t = t.Add(TimeSpan.FromSeconds(int.Parse(s.Substring(lastStart, pos - lastStart))));
+            return t;
         }
 
         private List<Action<T, string>> CreateSetters()

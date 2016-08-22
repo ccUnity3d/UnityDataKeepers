@@ -39,7 +39,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvF
             DefaultCsvDefinition = new CsvDefinition
             {
                 EndOfLine = "\r\n",
-                FieldSeparator = ';',
+                FieldSeparator = ',',
                 TextQualifier = '"'
             };
             UseLambdas = true;
