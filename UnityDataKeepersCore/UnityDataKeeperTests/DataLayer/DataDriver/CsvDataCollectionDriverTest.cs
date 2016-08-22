@@ -752,7 +752,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                             .Where(i => i.StringProperty.Equals("simle text")).ToList();
                     Assert.IsNotNull(neededStrings);
                     Assert.AreEqual(2,neededStrings.Count);
-                    Assert.AreEqual(1.2f,neededStrings[0].FloatProperty);
+                    Assert.IsTrue(neededStrings.Any(i => i.FloatProperty.Equals(1.2f)));
                 }
             }
             finally
