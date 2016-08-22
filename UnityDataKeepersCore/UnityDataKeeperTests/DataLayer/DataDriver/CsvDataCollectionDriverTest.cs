@@ -18,11 +18,16 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
         private static string CreateGoodCsvFile()
         {
+            return CreateCsvFile(GoodCsvText);
+        }
+
+        private static string CreateCsvFile(string content)
+        {
             var rndFileName = string.Concat(DateTime.UtcNow.Ticks.ToString(),
                 Rnd.NextDouble().ToString(CultureInfo.InvariantCulture),
                 ".csv");
             var file = File.CreateText(rndFileName);
-            file.Write(GoodCsvText);
+            file.Write(content);
             file.Close();
             return rndFileName;
         }
@@ -731,8 +736,119 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
 #region CSVTests
 
+        private void GoodCsvTester(IStoredCollectionDriver<CsvTestsDummyCollectionItem> driver)
+        {
+            Assert.AreEqual(29, driver.Count());
+            var neededStrings =
+                driver.GetAll()
+                    .Where(i => i.StringProperty.Equals("simle text")).ToList();
+            Assert.IsNotNull(neededStrings);
+            Assert.AreEqual(2, neededStrings.Count);
+            Assert.IsTrue(neededStrings.Any(i => i.FloatProperty.Equals(1.2f)));
+        }
+
         [TestMethod]
         public void SimpleReadTest()
+        {
+            var fileName = CreateGoodCsvFile();
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    GoodCsvTester(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void FactoryPushNullFilename()
+        {
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (null, false));
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (null, true));
+        }
+
+        [TestMethod]
+        public void FactoryPushWrongFilename()
+        {
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        ("kjgsdlfieoh", false));
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        ("C:\\projects\\putty.exe", false));
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        ("http://www.sample-videos.com/csv/Sample-Spreadsheet-10-rows.csv", false));
+
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        ("kjgsdlfieoh", true));
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        ("C:\\projects\\putty.exe", true));
+            Assert.IsNull(DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        ("http://www.sample-videos.com/csv/Sample-Spreadsheet-10-rows.csv", true));
+        }
+
+        [TestMethod]
+        public void ReadReadonlyFile()
+        {
+            var fileName = CreateGoodCsvFile();
+            File.SetAttributes(fileName, File.GetAttributes(fileName) & ~FileAttributes.ReadOnly);
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    GoodCsvTester(driver);
+                    Assert.IsTrue(driver.IsNotStorable);
+                }
+            }
+            finally
+            {
+                if ((File.GetAttributes(fileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    File.SetAttributes(fileName, File.GetAttributes(fileName) & ~FileAttributes.ReadOnly);
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void SimpleFileCanWrite()
+        {
+            var fileName = CreateGoodCsvFile();
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    GoodCsvTester(driver);
+                    Assert.IsFalse(driver.IsNotStorable);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void IfNotAutoLoadIsEmpty()
         {
             var tester =
                 new DataCollectionDriverInterfaceTester
@@ -746,13 +862,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
                         (fileName, false))
                 {
-                    Assert.AreEqual(29,driver.Count());
-                    var neededStrings =
-                        driver.GetAll()
-                            .Where(i => i.StringProperty.Equals("simle text")).ToList();
-                    Assert.IsNotNull(neededStrings);
-                    Assert.AreEqual(2,neededStrings.Count);
-                    Assert.IsTrue(neededStrings.Any(i => i.FloatProperty.Equals(1.2f)));
+                    tester.IsEmptyAndInInitialState(driver);
                 }
             }
             finally
@@ -760,6 +870,271 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 File.Delete(fileName);
             }
         }
+
+        [TestMethod]
+        public void WrongFileContent()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("ksgfdlkjgdg80936oir'32',S");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileHeader_WrongAttribute()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("String,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileHeader_MissingAttribute()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile(",IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileHeader_ExcessAttribute()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("Excess,StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nexcess,simle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileHeader_WrongLettersAttribute()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("StringProperty,                     IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void EmptyFile()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileContent_WrongValue()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("String,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field95,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileContent_MissingValue()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileContent_ExcessValue()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nexcess,simle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WrongFileContent_SmallWrongData()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\"");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+        
+        [TestMethod]
+        public void WrongFileContent_LargeWrongData()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = CreateCsvFile("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\"le text,1,\"1,2\"le text,1,\"1,2\"");
+            try
+            {
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, true))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
 #endregion
     }
 }

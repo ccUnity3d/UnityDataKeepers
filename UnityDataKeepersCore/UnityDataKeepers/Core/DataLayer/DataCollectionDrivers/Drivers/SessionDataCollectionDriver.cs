@@ -19,7 +19,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
 
         private List<TItem> _collection = new List<TItem>();
 
-        public virtual bool IsReadOnly
+        public virtual bool IsNotStorable
         {
             get { return false; }
         }

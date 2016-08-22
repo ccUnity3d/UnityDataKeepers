@@ -331,7 +331,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 DataCollectionDriverFactory.CreateSessionDataDriver<DummyDataItem>
                     ();
             // session is useless if it can't be rewritten
-            Assert.IsFalse(driver.IsReadOnly);
+            Assert.IsFalse(driver.IsNotStorable);
         }
 
         [TestMethod]

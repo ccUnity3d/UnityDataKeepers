@@ -11,13 +11,13 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
     {
         private StoredCollectionDataSource? _dataSource = null;
 
-        public override bool IsReadOnly
+        public override bool IsNotStorable
         {
             get
             {
                 return _dataSource.HasValue
                     ? _dataSource.Value.IsReadonly
-                    : base.IsReadOnly;
+                    : base.IsNotStorable;
             }
         }
 
@@ -39,12 +39,19 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         {
             try
             {
-                using (var csvFile = new CsvFile<TItem>("clients.csv"))
+                if (_dataSource.HasValue)
                 {
-                    foreach (var item in GetAll())
+                    using (var csvFile = new CsvFile<TItem>(_dataSource.Value.FilePath))
                     {
-                        csvFile.Append(item);
+                        foreach (var item in GetAll())
+                        {
+                            csvFile.Append(item);
+                        }
                     }
+                }
+                else
+                {
+                    return false;
                 }
                 return true;
             }

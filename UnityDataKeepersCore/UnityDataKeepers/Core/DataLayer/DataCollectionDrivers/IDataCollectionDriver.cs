@@ -7,7 +7,7 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
     public interface IDataCollectionDriver<TItem> : IDisposable
         where TItem : class, IDataItem
     {
-        bool IsReadOnly { get; }
+        bool IsNotStorable { get; }
         TItem GetByGuid(Guid guid);
         bool Add(TItem item);
         bool Remove(TItem item);
