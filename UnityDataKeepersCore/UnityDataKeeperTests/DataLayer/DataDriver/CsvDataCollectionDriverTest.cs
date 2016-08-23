@@ -865,7 +865,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (new StoredCollectionDataSource(fileName, false)))
+                        (new StoredCollectionDataSource(fileName, false), false))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
