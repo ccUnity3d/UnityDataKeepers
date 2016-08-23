@@ -811,7 +811,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         public void ReadReadonlyFile()
         {
             var fileName = CreateGoodCsvFile();
-            File.SetAttributes(fileName, File.GetAttributes(fileName) & ~FileAttributes.ReadOnly);
+            File.SetAttributes(fileName, File.GetAttributes(fileName) | FileAttributes.ReadOnly);
             try
             {
                 using (var driver =
