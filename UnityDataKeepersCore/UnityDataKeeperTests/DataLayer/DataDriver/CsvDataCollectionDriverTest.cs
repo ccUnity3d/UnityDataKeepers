@@ -843,7 +843,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                         (new StoredCollectionDataSource(fileName, true)))
                 {
                     GoodCsvTester(driver);
-                    Assert.IsFalse(driver.IsNotStorable);
+                    Assert.IsTrue(driver.IsNotStorable);
                 }
             }
             finally
