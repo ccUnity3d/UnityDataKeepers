@@ -1167,7 +1167,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 {
                     tester.IsEmptyAndInInitialState(driver);
                     driver.Add(item);
-                    driver.Save();
+                    Assert.IsTrue(driver.Save());
                 }
 
                 var csvTxt =
@@ -1185,6 +1185,43 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
             finally
             {
                 File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WriteToReadonlyTest()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = GetRandomFileName();
+            try
+            {
+                var item = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.1f,
+                    IntProperty = 3,
+                    StringProperty = "good job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (new StoredCollectionDataSource(fileName, true, true)))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                    driver.Add(item);
+                    Assert.IsFalse(driver.Save());
+                }
+            }
+            finally
+            {
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
             }
         }
 
