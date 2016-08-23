@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using UnityDataKeeperTests.DummyObjects;
@@ -18,18 +19,23 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
         private static string CreateGoodCsvFile()
         {
-            return CreateCsvFile(GoodCsvText);
+            return CreateFileWithContent(GoodCsvText);
         }
 
-        private static string CreateCsvFile(string content)
+        private static string CreateFileWithContent(string content)
         {
-            var rndFileName = string.Concat(DateTime.UtcNow.Ticks.ToString(),
-                Rnd.NextDouble().ToString(CultureInfo.InvariantCulture),
-                ".csv");
+            var rndFileName = GetRandomFileName();
             var file = File.CreateText(rndFileName);
             file.Write(content);
             file.Close();
             return rndFileName;
+        }
+
+        private static string GetRandomFileName()
+        {
+            return string.Concat(DateTime.UtcNow.Ticks.ToString(),
+                Rnd.NextDouble().ToString(CultureInfo.InvariantCulture),
+                ".csv");
         }
 
         #region BaseTests
@@ -878,7 +884,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("ksgfdlkjgdg80936oir'32',S");
+            var fileName = CreateFileWithContent("ksgfdlkjgdg80936oir'32',S");
             try
             {
                 using (var driver =
@@ -902,7 +908,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("String,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent("String,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -926,7 +932,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile(",IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent(",IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -950,7 +956,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("Excess,StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nexcess,simle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent("Excess,StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nexcess,simle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -974,7 +980,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("StringProperty,                     IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent("StringProperty,                     IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -998,7 +1004,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("");
+            var fileName = CreateFileWithContent("");
             try
             {
                 using (var driver =
@@ -1022,7 +1028,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("String,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field95,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent("String,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\",Field95,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -1046,7 +1052,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent("IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n1,\"1,2\",Field1,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -1070,7 +1076,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nexcess,simle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
+            var fileName = CreateFileWithContent("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nexcess,simle text,1,\"1,2\",Field1,12.08.2016 6:15:58,1");
             try
             {
                 using (var driver =
@@ -1094,7 +1100,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\"");
+            var fileName = CreateFileWithContent("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\"");
             try
             {
                 using (var driver =
@@ -1118,7 +1124,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 new DataCollectionDriverInterfaceTester
                     <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
                         CsvTestsDummyCollectionItem>();
-            var fileName = CreateCsvFile("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\"le text,1,\"1,2\"le text,1,\"1,2\"");
+            var fileName = CreateFileWithContent("StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\nsimle text,1,\"1,2\"le text,1,\"1,2\"le text,1,\"1,2\"");
             try
             {
                 using (var driver =
@@ -1128,6 +1134,93 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WriteTest()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = GetRandomFileName();
+            try
+            {
+                var item = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.1f,
+                    IntProperty = 3,
+                    StringProperty = "good job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, false))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                    driver.Add(item);
+                    driver.Save();
+                }
+
+                var csvTxt =
+                    string.Format(
+                        "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n{0},{1},{2},{3},{4},{5}",
+                        item.StringProperty,
+                        item.IntProperty,
+                        item.FloatProperty,
+                        item.EnumField,
+                        item.DateTimeField,
+                        item.TimeSpanField);
+                var txt = File.ReadAllText(fileName);
+                Assert.AreEqual(csvTxt, txt);
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void DontAutoWriteTest()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            const string fileTxt = "DontAutoWriteTest";
+            var fileName = CreateFileWithContent(fileTxt);
+            try
+            {
+                var item = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.1f,
+                    IntProperty = 3,
+                    StringProperty = "good job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (fileName, false))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                    driver.Add(item);
+                }
+
+                var txt = File.ReadAllText(fileName);
+                Assert.AreEqual(fileTxt, txt);
             }
             finally
             {
