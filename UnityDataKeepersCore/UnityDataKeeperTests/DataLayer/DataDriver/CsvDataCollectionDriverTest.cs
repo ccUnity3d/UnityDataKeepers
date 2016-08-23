@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using UnityDataKeeperTests.DummyObjects;
@@ -53,7 +54,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false, false))
+                        (new StoredCollectionDataSource(fileName, true), false))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -78,7 +79,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddTest_Good(driver);
                 }
@@ -103,7 +104,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddTest_AddNull(driver);
                 }
@@ -128,7 +129,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddTest_AddItemTwice(driver);
                 }
@@ -153,7 +154,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddMultipleTest_Good(driver);
                 }
@@ -178,7 +179,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddMultipleTest_AddNullItems(driver);
                 }
@@ -203,7 +204,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddMultipleTest_AddNullCollection(driver);
                 }
@@ -228,7 +229,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddMultipleTest_DoubleAddItems(driver);
                 }
@@ -253,7 +254,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.GetByHashTest_Good(driver);
                 }
@@ -278,7 +279,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.GetByHashTest_PushNull(driver);
                 }
@@ -303,7 +304,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveTest_Good(driver);
                 }
@@ -328,7 +329,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveTest_DoubleRemove(driver);
                 }
@@ -353,7 +354,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveTest_PushNull(driver);
                 }
@@ -378,7 +379,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveMultipleTest_Good(driver);
                 }
@@ -403,7 +404,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveMultipleTest_PushNullItems(driver);
                 }
@@ -428,7 +429,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveMultipleTest_DoubleRemove(driver);
                 }
@@ -453,7 +454,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.RemoveMultipleTest_PushNullCollection(driver);
                 }
@@ -478,7 +479,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.CountTest(driver);
                 }
@@ -503,7 +504,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false, false))
+                        (new StoredCollectionDataSource(fileName, false), false))
                 {
                     tester.GetAllTest(driver);
                 }
@@ -528,7 +529,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.ClearTest(driver);
                 }
@@ -553,7 +554,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.UpdateTest_SimpleUpdate(driver,
                         item =>
@@ -583,7 +584,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.UpdateTest_PushNull(driver);
                 }
@@ -607,7 +608,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.UpdateTest_UpdateNotMidifiedItem(driver);
                 }
@@ -631,7 +632,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.UpdateTest_UpdateItemNotInCollection(driver);
                 }
@@ -655,7 +656,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.UniqueHashesSimpleAdd(driver, 1000);
                 }
@@ -679,7 +680,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.UniqueHashesListAdd(driver, 1000);
                 }
@@ -703,7 +704,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.Add_Samereferences(driver, 1000);
                 }
@@ -727,7 +728,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.AddMultiple_SameReferences(driver, 1000);
                 }
@@ -762,7 +763,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     GoodCsvTester(driver);
                 }
@@ -778,34 +779,32 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         {
             Assert.IsNull(DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (null, false));
+                        (new StoredCollectionDataSource(null, true)));
             Assert.IsNull(DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (null, true));
+                        (new StoredCollectionDataSource(null, true)));
+        }
+
+        [TestMethod]
+        public void FactoryInit_CreateSourceIfNotExist()
+        {
+            Assert.IsNull(DataCollectionDriverFactory
+                .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                (new StoredCollectionDataSource("kjgsdlfieoh", false, false)));
+            Assert.IsNotNull(DataCollectionDriverFactory
+                .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                (new StoredCollectionDataSource("kjgsdlfieoh", false, true)));
         }
 
         [TestMethod]
         public void FactoryPushWrongFilename()
         {
+            Assert.IsNotNull(DataCollectionDriverFactory
+                .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                (new StoredCollectionDataSource("C:\\projects\\putty.exe", false, false)));
             Assert.IsNull(DataCollectionDriverFactory
-                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        ("kjgsdlfieoh", false));
-            Assert.IsNull(DataCollectionDriverFactory
-                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        ("C:\\projects\\putty.exe", false));
-            Assert.IsNull(DataCollectionDriverFactory
-                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        ("http://www.sample-videos.com/csv/Sample-Spreadsheet-10-rows.csv", false));
-
-            Assert.IsNull(DataCollectionDriverFactory
-                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        ("kjgsdlfieoh", true));
-            Assert.IsNull(DataCollectionDriverFactory
-                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        ("C:\\projects\\putty.exe", true));
-            Assert.IsNull(DataCollectionDriverFactory
-                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        ("http://www.sample-videos.com/csv/Sample-Spreadsheet-10-rows.csv", true));
+                .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                (new StoredCollectionDataSource("http://www.sample-videos.com/csv/Sample-Spreadsheet-10-rows.csv", false)));
         }
 
         [TestMethod]
@@ -818,7 +817,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     GoodCsvTester(driver);
                     Assert.IsTrue(driver.IsNotStorable);
@@ -841,7 +840,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     GoodCsvTester(driver);
                     Assert.IsFalse(driver.IsNotStorable);
@@ -866,7 +865,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -890,7 +889,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -914,7 +913,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -938,7 +937,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -962,7 +961,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -986,7 +985,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1010,7 +1009,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1034,7 +1033,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1058,7 +1057,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1082,7 +1081,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1106,7 +1105,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1130,7 +1129,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, true))
+                        (new StoredCollectionDataSource(fileName, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                 }
@@ -1164,7 +1163,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false, true)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                     driver.Add(item);
@@ -1213,7 +1212,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 using (var driver =
                     DataCollectionDriverFactory
                         .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
-                        (fileName, false))
+                        (new StoredCollectionDataSource(fileName, false)))
                 {
                     tester.IsEmptyAndInInitialState(driver);
                     driver.Add(item);

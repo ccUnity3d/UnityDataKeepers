@@ -1,25 +1,23 @@
-﻿using System.Text;
-
-namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
+﻿namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
 {
     public struct StoredCollectionDataSource
     {
         public readonly bool IsReadonly;
         public readonly string FilePath;
-        public readonly Encoding FileEncoding;
+        public readonly bool CreateSourceIfNoExist;
 
         public StoredCollectionDataSource(string filePath, bool isReadonly)
         {
             FilePath = filePath;
             IsReadonly = isReadonly;
-            FileEncoding = Encoding.Unicode;
+            CreateSourceIfNoExist = true;
         }
 
-        public StoredCollectionDataSource(string filePath, bool isReadonly, Encoding fileEncoding)
+        public StoredCollectionDataSource(string filePath, bool isReadonly, bool createSourceIfNoExist)
         {
-            FilePath = filePath;
             IsReadonly = isReadonly;
-            FileEncoding = fileEncoding;
+            FilePath = filePath;
+            CreateSourceIfNoExist = createSourceIfNoExist;
         }
     }
 }

@@ -11,11 +11,12 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers
             return new SessionDataCollectionDriver<T>();
         }
 
-        public static IStoredCollectionDriver<T> CreateCsvDataDriver<T>(string filePath, bool isReadonly, bool autoLoad = true)
+        public static IStoredCollectionDriver<T> CreateCsvDataDriver<T>(StoredCollectionDataSource source, bool autoLoad = true)
             where T : class, IDataItem, new()
         {
             var driver = new CsvDataCollectionDriver<T>();
-            driver.SetDataSource(new StoredCollectionDataSource(filePath, isReadonly));
+            if (!driver.SetAndVerifyDataSource(source))
+                return null;
             if (autoLoad)
                 driver.Load();
             return driver;
