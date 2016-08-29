@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvFiles;
 using UnityDataKeepersCore.Core.DataLayer.Model;
 
@@ -55,6 +57,25 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
                 return false;
             if (!File.Exists(_dataSource.Value.FilePath))
                 return false;
+
+            try
+            {
+                using (var file = new StreamReader(File.OpenRead(_dataSource.Value.FilePath)))
+                {
+                    var header = file.ReadLine() ?? "";
+                    var headerAttributes = header.Split(',').OrderBy(i => i);
+                    var itemAttributes = typeof(TItem).GetFields(BindingFlags.Instance | BindingFlags.Public)
+                        .Select(i => i.Name)
+                        .Union(typeof(TItem).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .Select(i => i.Name)).Where(i => !i.Equals("Guid")).OrderBy(i => i);
+                    if (!headerAttributes.SequenceEqual(itemAttributes)) return false;
+                    //                    attributes = Enumerable.Except()
+                }
+            }
+            catch
+            {
+                return false;
+            }
 
             Add(CsvFile.Read<TItem>(_dataSource.Value.FilePath));
             return true;
