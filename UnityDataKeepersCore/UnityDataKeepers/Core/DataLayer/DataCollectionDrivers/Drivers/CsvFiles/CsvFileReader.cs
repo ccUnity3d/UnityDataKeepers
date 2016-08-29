@@ -104,15 +104,19 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvF
                     this.allSetters[recordType] = setters;
                 }
 
-                var fieldValues = new string[setters.Count];
+                var fieldValues = new List<string>();
                 for (int i = 0; i < setters.Count; i++)
                 {
-                    fieldValues[i] = this.ParseField();
+                    fieldValues.Add(this.ParseField());
                     if (this.curChar == this.fieldSeparator)
                         this.NextChar();
                     else
                         break;
                 }
+
+                if (fieldValues.Count != setters.Count)
+                    throw new ArgumentException();
+
                 for (int i = 0; i < setters.Count; i++)
                 {
                     var setter = setters[i];

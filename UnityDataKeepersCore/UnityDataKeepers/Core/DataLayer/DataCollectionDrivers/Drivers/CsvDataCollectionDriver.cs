@@ -77,7 +77,16 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
                 return false;
             }
 
-            Add(CsvFile.Read<TItem>(_dataSource.Value.FilePath));
+            try
+            {
+                var data = CsvFile.Read<TItem>(_dataSource.Value.FilePath).ToArray();
+                Add(data);
+            }
+            catch
+            {
+                return false;
+            }
+
             return true;
         }
 
