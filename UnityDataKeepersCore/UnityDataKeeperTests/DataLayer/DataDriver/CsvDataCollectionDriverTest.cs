@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Web;
 using UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers;
 using UnityDataKeeperTests.DummyObjects;
 
@@ -1181,6 +1183,143 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                         item.TimeSpanField);
                 var txt = File.ReadAllText(fileName);
                 Assert.AreEqual(csvTxt, txt);
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WriteTest_2files()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = GetRandomFileName();
+            try
+            {
+                var item = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.1f,
+                    IntProperty = 3,
+                    StringProperty = "good job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                var item2 = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.98f,
+                    IntProperty = 15,
+                    StringProperty = "good \" job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (new StoredCollectionDataSource(fileName, false, true)))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                    driver.Add(item);
+                    driver.Add(item2);
+                    Assert.IsTrue(driver.Save());
+                }
+
+                var csvTxt =
+                    string.Format(
+                        "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n{0},{1},{2},{3},{4},{5}",
+                        item.StringProperty,
+                        item.IntProperty,
+                        item.FloatProperty,
+                        item.EnumField,
+                        item.DateTimeField,
+                        item.TimeSpanField);
+
+                csvTxt +=
+                    string.Format(
+                        "\n{0},{1},{2},{3},{4},{5}",
+                        item2.StringProperty,
+                        item2.IntProperty,
+                        item2.FloatProperty,
+                        item2.EnumField,
+                        item2.DateTimeField,
+                        item2.TimeSpanField);
+
+                var txt = File.ReadAllText(fileName);
+                Assert.AreEqual(csvTxt, txt);
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
+
+        [TestMethod]
+        public void WriteReadTest()
+        {
+            var tester =
+                new DataCollectionDriverInterfaceTester
+                    <IDataCollectionDriver<CsvTestsDummyCollectionItem>,
+                        CsvTestsDummyCollectionItem>();
+            var fileName = GetRandomFileName();
+            try
+            {
+                var item = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.1f,
+                    IntProperty = 3,
+                    StringProperty = "good job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                var item2 = new CsvTestsDummyCollectionItem()
+                {
+                    DateTimeField = DateTime.Now,
+                    EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
+                    FloatProperty = 0.98f,
+                    IntProperty = 15,
+                    StringProperty = "good \" job",
+                    TimeSpanField = TimeSpan.FromMinutes(13)
+                };
+
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (new StoredCollectionDataSource(fileName, false, true)))
+                {
+                    tester.IsEmptyAndInInitialState(driver);
+                    driver.Add(item);
+                    driver.Add(item2);
+                    Assert.IsTrue(driver.Save());
+                }
+
+                using (var driver =
+                    DataCollectionDriverFactory
+                        .CreateCsvDataDriver<CsvTestsDummyCollectionItem>
+                        (new StoredCollectionDataSource(fileName, false)))
+                {
+                    var all = driver.GetAll().ToArray();
+
+                    Assert.AreEqual(2, all.Count());
+                    var comparer =
+                        new Comparison<CsvTestsDummyCollectionItem>(
+                            (a, b) => string.Compare(a.StringProperty, b.StringProperty, StringComparison.Ordinal) +
+                                      a.IntProperty.CompareTo(b.IntProperty) +
+                                      a.FloatProperty.CompareTo(b.FloatProperty) +
+                                      a.EnumField.CompareTo(b.EnumField) +
+                                      a.DateTimeField.CompareTo(b.DateTimeField) +
+                                      a.TimeSpanField.CompareTo(b.TimeSpanField));
+                    Assert.AreEqual(0, comparer(item, all[0]));
+                    Assert.AreEqual(0, comparer(item2, all[1]));
+                }
             }
             finally
             {
