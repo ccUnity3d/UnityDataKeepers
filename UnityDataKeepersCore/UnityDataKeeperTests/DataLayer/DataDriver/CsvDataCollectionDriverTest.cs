@@ -1174,7 +1174,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
                 var csvTxt =
                     string.Format(
-                        "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n{0},{1},{2},{3},{4},{5}",
+                        "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n{0},{1},\"{2}\",{3},{4},{5}",
                         item.StringProperty,
                         item.IntProperty,
                         item.FloatProperty,
@@ -1216,7 +1216,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
                     FloatProperty = 0.98f,
                     IntProperty = 15,
-                    StringProperty = "good \" job",
+                    StringProperty = "good , job",
                     TimeSpanField = TimeSpan.FromMinutes(13)
                 };
 
@@ -1236,7 +1236,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     {
                         "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField",
                         string.Format(
-                            "{0},{1},{2},{3},{4},{5}",
+                            "{0},{1},\"{2}\",{3},{4},{5}",
                             item.StringProperty,
                             item.IntProperty,
                             item.FloatProperty,
@@ -1244,7 +1244,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                             item.DateTimeField,
                             item.TimeSpanField),
                         string.Format(
-                            "\"{0}\",{1},{2},{3},{4},{5}",
+                            "\"{0}\",{1},\"{2}\",{3},{4},{5}",
                             item2.StringProperty,
                             item2.IntProperty,
                             item2.FloatProperty,
@@ -1288,7 +1288,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                     EnumField = CsvTestsDummyCollectionItem.CsvTestEnum.Field1,
                     FloatProperty = 0.98f,
                     IntProperty = 15,
-                    StringProperty = "good \" job",
+                    StringProperty = "good job",
                     TimeSpanField = TimeSpan.FromMinutes(13)
                 };
 
@@ -1312,15 +1312,19 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
 
                     Assert.AreEqual(2, all.Length, File.ReadAllText(fileName));
                     var comparer =
-                        new Comparison<CsvTestsDummyCollectionItem>(
-                            (a, b) => string.Compare(a.StringProperty, b.StringProperty, StringComparison.Ordinal) +
-                                      a.IntProperty.CompareTo(b.IntProperty) +
-                                      a.FloatProperty.CompareTo(b.FloatProperty) +
-                                      a.EnumField.CompareTo(b.EnumField) +
-                                      a.DateTimeField.CompareTo(b.DateTimeField) +
-                                      a.TimeSpanField.CompareTo(b.TimeSpanField));
-                    Assert.AreEqual(0, comparer(item, all[0]));
-                    Assert.AreEqual(0, comparer(item2, all[1]));
+                        new Func<CsvTestsDummyCollectionItem, CsvTestsDummyCollectionItem, bool>(
+                            (a, b) =>
+                            {
+                                var res = a.StringProperty.Equals(b.StringProperty) &&
+                                          a.IntProperty.Equals(b.IntProperty) &&
+                                          a.FloatProperty.Equals(b.FloatProperty) &&
+                                          a.EnumField.Equals(b.EnumField) &&
+                                          Math.Abs((a.DateTimeField - b.DateTimeField).TotalSeconds) < 1 &&
+                                          a.TimeSpanField.Equals(b.TimeSpanField);
+                                return res;
+                            });
+                    Assert.AreEqual(1, all.Count(i => comparer(item, i)));
+                    Assert.AreEqual(1, all.Count(i => comparer(item2, i)));
                 }
             }
             finally
