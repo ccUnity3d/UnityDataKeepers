@@ -1191,7 +1191,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
         }
 
         [TestMethod]
-        public void WriteTest_2files()
+        public void WriteTest_2items()
         {
             var tester =
                 new DataCollectionDriverInterfaceTester
@@ -1232,27 +1232,29 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 }
 
                 var csvTxt =
-                    string.Format(
-                        "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField\n{0},{1},{2},{3},{4},{5}",
-                        item.StringProperty,
-                        item.IntProperty,
-                        item.FloatProperty,
-                        item.EnumField,
-                        item.DateTimeField,
-                        item.TimeSpanField);
+                    new[]
+                    {
+                        "StringProperty,IntProperty,FloatProperty,EnumField,DateTimeField,TimeSpanField",
+                        string.Format(
+                            "{0},{1},{2},{3},{4},{5}",
+                            item.StringProperty,
+                            item.IntProperty,
+                            item.FloatProperty,
+                            item.EnumField,
+                            item.DateTimeField,
+                            item.TimeSpanField),
+                        string.Format(
+                            "\"{0}\",{1},{2},{3},{4},{5}",
+                            item2.StringProperty,
+                            item2.IntProperty,
+                            item2.FloatProperty,
+                            item2.EnumField,
+                            item2.DateTimeField,
+                            item2.TimeSpanField)
+                    };
 
-                csvTxt +=
-                    string.Format(
-                        "\n{0},{1},{2},{3},{4},{5}",
-                        item2.StringProperty,
-                        item2.IntProperty,
-                        item2.FloatProperty,
-                        item2.EnumField,
-                        item2.DateTimeField,
-                        item2.TimeSpanField);
-
-                var txt = File.ReadAllText(fileName);
-                Assert.AreEqual(csvTxt, txt);
+                var txt = File.ReadAllLines(fileName);
+                Assert.IsTrue(csvTxt.OrderBy(i=>i).SequenceEqual(txt.OrderBy(i=>i)));
             }
             finally
             {
@@ -1308,7 +1310,7 @@ namespace UnityDataKeeperTests.DataLayer.DataDriver
                 {
                     var all = driver.GetAll().ToArray();
 
-                    Assert.AreEqual(2, all.Count());
+                    Assert.AreEqual(2, all.Length, File.ReadAllText(fileName));
                     var comparer =
                         new Comparison<CsvTestsDummyCollectionItem>(
                             (a, b) => string.Compare(a.StringProperty, b.StringProperty, StringComparison.Ordinal) +
