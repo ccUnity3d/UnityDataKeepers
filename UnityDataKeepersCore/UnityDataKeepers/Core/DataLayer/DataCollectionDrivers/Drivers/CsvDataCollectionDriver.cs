@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -94,13 +95,27 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
         {
             try
             {
-                if (_dataSource.HasValue)
+                if (_dataSource.HasValue && !IsNotStorable)
                 {
-                    using (var csvFile = new CsvFile<TItem>(_dataSource.Value.FilePath))
+                    using (var file = new StreamWriter(File.Open(_dataSource.Value.FilePath,FileMode.Create)))
                     {
-                        foreach (var item in GetAll())
+                        const string separator = ",";
+                        const string eol = "\n";
+                        var fields = typeof(TItem).GetFields(BindingFlags.Instance | BindingFlags.Public).ToArray();
+                        var properties = typeof (TItem).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .Where(i => !i.Name.Equals("Guid")).ToArray();
+                        var headers = string.Join(separator,
+                            fields.Select(i => i.Name).Union(properties.Select(i => i.Name)).ToArray());
+                        file.Write(headers + eol);
+
+                        var getters = fields.Select(field => (Func<TItem, string>) (i => field.GetValue(i).ToString()))
+                            .Union(
+                                properties.Select(prop => (Func<TItem, string>) (i => prop.GetValue(i, null).ToString())));
+                        var all = GetAll();
+                        var datas = all.Select((i, index) => string.Join(separator, getters.Select(g => g(i)).ToArray()));
+                        foreach (var data in datas)
                         {
-                            csvFile.Append(item);
+                            file.Write(data);
                         }
                     }
                 }
