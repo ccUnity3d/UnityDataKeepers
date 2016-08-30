@@ -111,12 +111,23 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers
                         var getters = fields.Select(field => (Func<TItem, string>) (i => field.GetValue(i).ToString()))
                             .Union(
                                 properties.Select(prop => (Func<TItem, string>) (i => prop.GetValue(i, null).ToString())));
-                        var all = GetAll();
-                        var datas = all.Select((i, index) => string.Join(separator, getters.Select(g => g(i)).ToArray()));
+                        var all = GetAll().ToArray();
+                        var datas =
+                            all.Select(
+                                (i, index) =>
+                                    string.Join(separator, getters.Select(g => { var s = g(i);
+                                                                                   return s.Contains(separator)
+                                                                                       ? string.Format("\"{0}\"", s)
+                                                                                       : s;
+                                    }).ToArray()) +
+                                    (index == all.Length - 1
+                                        ? ""
+                                        : eol));
                         foreach (var data in datas)
                         {
                             file.Write(data);
                         }
+                        file.Flush();
                     }
                 }
                 else
