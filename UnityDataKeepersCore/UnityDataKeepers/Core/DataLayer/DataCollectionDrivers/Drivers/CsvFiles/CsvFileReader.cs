@@ -277,7 +277,18 @@ namespace UnityDataKeepersCore.Core.DataLayer.DataCollectionDrivers.Drivers.CsvF
                 }
             }
             if (pos > lastStart)
-                t = t.Add(TimeSpan.FromSeconds(int.Parse(s.Substring(lastStart, pos - lastStart))));
+            {
+                var value = 0;
+                if (int.TryParse(s.Substring(lastStart, pos - lastStart), out value))
+                {
+                    t = t.Add(TimeSpan.FromSeconds(value));
+                }
+                else
+                {
+                    t = TimeSpan.Parse(s);
+                }
+
+            }
             return t;
         }
 
