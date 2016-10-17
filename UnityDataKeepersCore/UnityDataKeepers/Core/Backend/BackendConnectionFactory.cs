@@ -7,9 +7,9 @@
             return new HtmlLoader();
         }
 
-        public static IBackendConnector GetBackendConnector(string backendId, string mainKeeperId, string roleName, string accessKey)
+        public static IBackendConnector GetGoogleBackendConnector(string backendId, string mainKeeperId, string roleName, string accessKey)
         {
-            return new BackendConnector(backendId, mainKeeperId, roleName, accessKey);
+            return new GoogleBackendConnector(backendId, mainKeeperId, roleName, accessKey);
         }
     }
 }

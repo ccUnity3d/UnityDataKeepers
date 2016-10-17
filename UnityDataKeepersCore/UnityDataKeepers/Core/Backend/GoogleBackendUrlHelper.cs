@@ -1,6 +1,6 @@
 ﻿namespace UnityDataKeepersCore.Core.Backend
 {
-    internal static class BackendUrlHelper
+    internal static class GoogleBackendUrlHelper
     {
         public static string GetHandshakeUrl(string backendId, string mainKeeperId, string roleName, string accessKey)
         {

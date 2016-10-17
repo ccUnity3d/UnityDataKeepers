@@ -18,14 +18,14 @@ namespace UnityDataKeeperTests.Backend
         [TestMethod]
         public void GetConnector()
         {
-            var connector = BackendConnectionFactory.GetBackendConnector(BackendId, MainKeeperId, RoleName, AccessKey);
+            var connector = BackendConnectionFactory.GetGoogleBackendConnector(BackendId, MainKeeperId, RoleName, AccessKey);
             Assert.IsNotNull(connector);
         }
 
         [TestMethod]
         public void TryConnect()
         {
-            var connector = BackendConnectionFactory.GetBackendConnector(BackendId, MainKeeperId, RoleName, AccessKey);
+            var connector = BackendConnectionFactory.GetGoogleBackendConnector(BackendId, MainKeeperId, RoleName, AccessKey);
             Assert.IsFalse(connector.IsConnected);
             connector.Connect();
             Assert.IsTrue(connector.IsConnected);
@@ -34,7 +34,7 @@ namespace UnityDataKeeperTests.Backend
         [TestMethod]
         public void Connect_BadBackendId()
         {
-            var connector = BackendConnectionFactory.GetBackendConnector("ksjdfg", MainKeeperId, RoleName, AccessKey);
+            var connector = BackendConnectionFactory.GetGoogleBackendConnector("ksjdfg", MainKeeperId, RoleName, AccessKey);
             Assert.IsFalse(connector.IsConnected);
             connector.Connect();
             Assert.IsFalse(connector.IsConnected);
@@ -43,7 +43,7 @@ namespace UnityDataKeeperTests.Backend
         [TestMethod]
         public void Connect_BadKeeperId()
         {
-            var connector = BackendConnectionFactory.GetBackendConnector(BackendId, "sadf", RoleName, AccessKey);
+            var connector = BackendConnectionFactory.GetGoogleBackendConnector(BackendId, "sadf", RoleName, AccessKey);
             Assert.IsFalse(connector.IsConnected);
             connector.Connect();
             Assert.IsFalse(connector.IsConnected);
@@ -52,7 +52,7 @@ namespace UnityDataKeeperTests.Backend
         [TestMethod]
         public void Connect_BadRole()
         {
-            var connector = BackendConnectionFactory.GetBackendConnector(BackendId, MainKeeperId, "akljsfg", AccessKey);
+            var connector = BackendConnectionFactory.GetGoogleBackendConnector(BackendId, MainKeeperId, "akljsfg", AccessKey);
             Assert.IsFalse(connector.IsConnected);
             connector.Connect();
             Assert.IsFalse(connector.IsConnected);
@@ -61,7 +61,7 @@ namespace UnityDataKeeperTests.Backend
         [TestMethod]
         public void Connect_BadAccessKey()
         {
-            var connector = BackendConnectionFactory.GetBackendConnector(BackendId, MainKeeperId, RoleName, "lskdfjga");
+            var connector = BackendConnectionFactory.GetGoogleBackendConnector(BackendId, MainKeeperId, RoleName, "lskdfjga");
             Assert.IsFalse(connector.IsConnected);
             connector.Connect();
             Assert.IsFalse(connector.IsConnected);

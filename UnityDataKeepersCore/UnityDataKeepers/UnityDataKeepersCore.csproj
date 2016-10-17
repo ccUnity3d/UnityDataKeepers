@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Backend\BackendConnectionFactory.cs" />
-    <Compile Include="Core\Backend\BackendConnector.cs" />
-    <Compile Include="Core\Backend\BackendUrlHelper.cs" />
+    <Compile Include="Core\Backend\GoogleBackendConnector.cs" />
+    <Compile Include="Core\Backend\GoogleBackendUrlHelper.cs" />
     <Compile Include="Core\Backend\HtmlLoader.cs" />
     <Compile Include="Core\Backend\IBackendConnector.cs" />
     <Compile Include="Core\Backend\IDataLoader.cs" />

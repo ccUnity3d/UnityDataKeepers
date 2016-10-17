@@ -2,7 +2,7 @@
 
 namespace UnityDataKeepersCore.Core.Backend
 {
-    internal class BackendConnector: IBackendConnector
+    internal class GoogleBackendConnector: IBackendConnector
     {
         public bool IsConnected { get; private set; }
 
@@ -16,7 +16,7 @@ namespace UnityDataKeepersCore.Core.Backend
 
         private IDataLoader _dataLoader;
 
-        public BackendConnector(string backendId, string mainKeeperId, string roleName, string accessKey)
+        public GoogleBackendConnector(string backendId, string mainKeeperId, string roleName, string accessKey)
         {
             BackendId = backendId;
             MainKeeperId = mainKeeperId;
@@ -34,9 +34,9 @@ namespace UnityDataKeepersCore.Core.Backend
 
         public void Connect()
         {
-            var connectUrl = BackendUrlHelper.GetHandshakeUrl(BackendId, MainKeeperId, RoleName, AccessKey);
+            var connectUrl = GoogleBackendUrlHelper.GetHandshakeUrl(BackendId, MainKeeperId, RoleName, AccessKey);
             var res = MakeQuery(connectUrl);
-            if (BackendUrlHelper.IsHandshakeRequest(res))
+            if (GoogleBackendUrlHelper.IsHandshakeRequest(res))
                 IsConnected = true;
         }
 
