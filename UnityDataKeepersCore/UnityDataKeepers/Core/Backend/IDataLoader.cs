@@ -1,6 +1,6 @@
 ﻿namespace UnityDataKeepersCore.Core.Backend
 {
-    public interface IBackendConnection
+    public interface IDataLoader
     {
         string LoadFromUrl(string url);
     }

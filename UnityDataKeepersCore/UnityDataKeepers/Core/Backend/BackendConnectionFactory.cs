@@ -2,9 +2,14 @@
 {
     public static class BackendConnectionFactory
     {
-        public static IBackendConnection GetHtmlLoader()
+        public static IDataLoader GetHtmlLoader()
         {
             return new HtmlLoader();
+        }
+
+        public static IBackendConnector GetBackendConnector(string backendId, string mainKeeperId, string roleName, string accessKey)
+        {
+            return new BackendConnector(backendId, mainKeeperId, roleName, accessKey);
         }
     }
 }

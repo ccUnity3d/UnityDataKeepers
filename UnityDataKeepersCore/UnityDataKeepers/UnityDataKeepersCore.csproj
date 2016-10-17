@@ -40,8 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Backend\BackendConnectionFactory.cs" />
+    <Compile Include="Core\Backend\BackendConnector.cs" />
+    <Compile Include="Core\Backend\BackendUrlHelper.cs" />
     <Compile Include="Core\Backend\HtmlLoader.cs" />
-    <Compile Include="Core\Backend\IBackendConnection.cs" />
+    <Compile Include="Core\Backend\IBackendConnector.cs" />
+    <Compile Include="Core\Backend\IDataLoader.cs" />
+    <Compile Include="Core\Backend\KeeperSignature.cs" />
+    <Compile Include="Core\Backend\KeeperSignatureField.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvDataCollectionDriver.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvDefinition.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvDestination.cs" />

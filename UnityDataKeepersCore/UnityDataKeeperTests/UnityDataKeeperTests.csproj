@@ -48,12 +48,15 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
     <Compile Include="Backend\HtmlLoaderTests.cs" />
+    <Compile Include="Backend\BackendConnectionTests.cs" />
     <Compile Include="DataLayer\DataDriver\CsvDataCollectionDriverTest.cs" />
     <Compile Include="DataLayer\DataDriver\DataCollectionDriverInterfaceTester.cs" />
     <Compile Include="DataLayer\DataDriver\SessionDataDriverTests.cs" />
