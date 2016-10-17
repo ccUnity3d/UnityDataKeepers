@@ -39,6 +39,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Backend\BackendConnection.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvDataCollectionDriver.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvDefinition.cs" />
     <Compile Include="Core\DataLayer\DataCollectionDrivers\Drivers\CsvFiles\CsvDestination.cs" />
