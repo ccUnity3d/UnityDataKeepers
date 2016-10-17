@@ -53,7 +53,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Backend\UnitTest1.cs" />
+    <Compile Include="Backend\HtmlLoaderTests.cs" />
     <Compile Include="DataLayer\DataDriver\CsvDataCollectionDriverTest.cs" />
     <Compile Include="DataLayer\DataDriver\DataCollectionDriverInterfaceTester.cs" />
     <Compile Include="DataLayer\DataDriver\SessionDataDriverTests.cs" />
